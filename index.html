@@ -1,4 +1,372 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OFFSEC By Vijay</title><meta http-equiv="refresh" content="0; url=./writeups/">
-<style>body{background:#0a111c;color:#9fef00;font:14px ui-monospace,Consolas,monospace;display:grid;place-items:center;min-height:100vh;margin:0}a{color:#00e5ff}</style></head>
-<body><p>Homepage coming soon… redirecting to <a href="./writeups/">Write-ups</a></p></body></html>
+<!doctype html>
+<html lang="en" data-rgb="on"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OFFSEC By Vijay</title>
+<meta name="description" content="Blue team portfolio — SOC training, certifications and write-ups.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+<script>
+/* ============================================================
+   EDIT YOUR PROFILE HERE — leave any field "" or [] to hide it
+   ============================================================ */
+const PROFILE = {
+  siteName: "OFFSEC By Vijay",
+  name: "Vijay Kumar Debarki",
+  headline: "IT Infrastructure & Security · Blue Team",
+  location: "Visakhapatnam, India",
+  photo: "https://htb-sso-prod-public-storage.s3.eu-central-1.amazonaws.com/users/33696e95-ebfe-4ffd-9ece-69a385f4697c-avatar.png",
+  typing: ["whoami", "cat experience.log", "fortigate --audit policies", "./triage --alerts"],
+  pitch: "I secure the systems I run every day — firewalls, identity, endpoints and Azure — and I'm sharpening my SOC skills on TryHackMe and HackTheBox, where I'm in the top 5% globally.",
+  resume: "resume.pdf",            // upload your CV to the repo root with this name ("" to hide)
+
+  statsAsOf: "Sep 2026",
+  stats: [
+    { value: "Since 2022", label: "Hands-on in IT & security", sub: "Concentrix · Netsoft · ACN Healthcare", color: "amber"  },
+    { value: "Top 5%",     label: "TryHackMe global rank",     sub: "#134,521 · 103 rooms · 19 badges",     color: "red"    },
+    { value: "Hacker",     label: "HackTheBox rank",           sub: "Season 8 Ruby tier · Holmes CTF 2025", color: "green"  },
+    { value: "4",          label: "Security certifications",   sub: "Cisco · EC-Council · Edureka · Google", color: "violet" }
+  ],
+
+  about: [
+    "I'm an IT infrastructure and security professional working hands-on with the controls attackers try to get past: FortiGate NGFWs, Active Directory and Group Policy, Microsoft 365, Entra ID and Intune.",
+    "Before that I built enterprise-style Azure labs — VNets, Azure Firewall, Bastion, Key Vault, Defender for Cloud and Microsoft Sentinel — and monitored endpoints with Cortex XDR and FireEye at Concentrix.",
+    "Now I'm moving deeper into security operations: working through the TryHackMe SOC Level 1 path (top 5% worldwide, 103 rooms) and HackTheBox DFIR challenges, and writing up every investigation."
+  ],
+  goal: "Open to SOC Analyst (L1) / Security Analyst roles and short freelance engagements.",
+
+  experience: [
+    { role: "Support Engineer – IT", org: "ACN Healthcare", date: "Oct 2025 – Present", current: true,
+      points: ["Configure and maintain FortiGate NGFWs (60E, 100F, 120G, 200G): SD-WAN, VLANs, IPsec site-to-site, SSL VPN and category-based web filtering",
+               "Administer Active Directory, Group Policy, Microsoft 365 and mail admin for users and resources",
+               "Manage Cisco network devices and Wi-Fi access points (EWC controller)",
+               "Support IT auditors on compliance and governance; work alongside client IT teams with shared privileges"] },
+    { role: "Lab Tester (Independent Contractor)", org: "Netsoft College of Technology", date: "Oct 2024 – Feb 2025",
+      points: ["Built end-to-end Azure lab environments simulating enterprise use cases for students",
+               "Configured Azure Firewall, Bastion, NSGs, VPN gateways, private endpoints, Key Vault, Defender and Sentinel SIEM",
+               "Deployed Azure Virtual Desktop, Intune compliance policies and Windows Autopilot; automated with PowerShell, ARM and Azure CLI"] },
+    { role: "Cybersecurity Internship", org: "Edureka", date: "Aug 2023 – Dec 2023",
+      points: ["Hands-on with Wireshark, Nmap, Metasploit, Burp Suite and OWASP ZAP",
+               "Firewalls, IDS/IPS, VPN, TLS/PKI, malware analysis and forensic investigation fundamentals"] },
+    { role: "IT Support Engineer", org: "Concentrix", date: "Jan 2022 – Jul 2023",
+      points: ["Monitored endpoint threats with Cortex XDR and FireEye",
+               "Managed Active Directory accounts, groups and permissions; enforced password and access-control policies",
+               "Patching, security configuration, compliance audits and PowerShell automation"] }
+  ],
+  education: "B.Sc. Computer Science — Andhra University (2020)",
+
+  skills: {
+    "Security Operations": ["Microsoft Sentinel", "Defender for Cloud", "Cortex XDR", "FireEye", "Splunk", "Elastic", "Alert triage"],
+    "Network Security":    ["FortiGate NGFW", "SD-WAN", "IPsec / SSL VPN", "Web filtering", "VLANs", "Cisco", "Wireshark", "Snort"],
+    "Identity & Endpoint": ["Active Directory", "Group Policy", "Entra ID", "Intune / MDM", "Autopilot", "Microsoft 365"],
+    "Cloud (Azure)":       ["Azure Firewall & WAF", "NSGs & VNets", "Bastion", "Key Vault", "RBAC", "Azure Virtual Desktop"],
+    "Analysis & Tools":    ["Phishing analysis", "MITRE ATT&CK", "Nmap", "Burp Suite", "PowerShell", "Azure CLI"]
+  },
+
+  services: [
+    { icon: "⛨", title: "FortiGate firewall setup & review", text: "Policy and rule review, VLANs, SD-WAN, IPsec/SSL VPN and web-filtering configuration for small offices — with a written change summary." },
+    { icon: "☁", title: "Microsoft 365 & Intune hardening", text: "MFA, Entra ID and conditional-access basics, Intune compliance policies and device enrolment for small teams." },
+    { icon: "✉", title: "Phishing email analysis", text: "Header, link and attachment analysis of suspicious emails, with a clear verdict and the IOCs to block." },
+    { icon: "✓", title: "Small-business security check", text: "Plain-language review of firewall, accounts, backups, patching and device encryption — with prioritised fixes." }
+  ],
+  servicesNote: "Scoped, fixed-price engagements. Every job ends with a written report.",
+
+  credlyProfile: "https://www.credly.com/users/vijay-debarki/badges",
+  credlyBadgeIds: [],              // paste badge IDs here, e.g. ["1a2b3c4d-...."]
+  certifications: [
+    { name: "Ethical Hacker", issuer: "Cisco", date: "", url: "https://www.credly.com/users/vijay-debarki/badges", status: "Credly verified" },
+    { name: "Wireshark", issuer: "EC-Council", date: "", url: "", status: "Earned" },
+    { name: "Certified Security Expert Hacking (CSEH)", issuer: "Edureka", date: "", url: "", status: "Earned" },
+    { name: "IT Support Professional Certificate", issuer: "Google", date: "", url: "", status: "Earned" },
+    { name: "Holmes CTF 2025", issuer: "Hack The Box", date: "Sep 2025", url: "https://profile.hackthebox.com/profile/019d6da5-1517-73c7-aa06-116ea1518bbd", status: "Event certificate" },
+    { name: "SOC Level 1 Path", issuer: "TryHackMe", date: "2026", url: "https://tryhackme.com/path/outline/soclevel1", status: "In progress" }
+  ],
+
+  tryhackme:  { url: "https://tryhackme.com/p/vijaydebarki", username: "vijaydebarki",
+                highlights: ["Top 5% globally · rank #134,521", "103 rooms completed", "19 badges · level 0x9 [MAGE]"] },
+  hackthebox: { url: "https://profile.hackthebox.com/profile/019d6da5-1517-73c7-aa06-116ea1518bbd",
+                highlights: ["Hacker rank (Script Kiddie → Hacker)", "Season 8: Bronze → Silver → Ruby tier", "Holmes CTF 2025 participant", "6 Labs + 9 Academy achievements"] },
+
+  links: {
+    linkedin: "https://www.linkedin.com/in/vijay-debarki-131a8014a/",
+    github: "https://github.com/vijaydebarki",
+    email: "vijaydebarki@gmail.com"
+  }
+};
+
+</script>
+<style>
+@property --a{syntax:'<angle>';inherits:false;initial-value:0deg}
+:root{--bg:#0a111c;--panel:#111b2a;--panel2:#16233a;--line:#1e2c42;--row:#18253a;--txt:#e6edf6;--muted:#8391a7;--green:#9fef00;--cyan:#00e5ff;--mag:#ff2bd6;--red:#ff3e5b;--amber:#ffb800;--violet:#8f5bff;
+--rgb:linear-gradient(90deg,var(--green),var(--cyan),var(--violet),var(--mag),var(--green));
+--mono:"JetBrains Mono",ui-monospace,Consolas,monospace;--disp:"Rajdhani","Segoe UI",system-ui,sans-serif;--sans:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color-scheme:dark}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:border-box}
+html{background:var(--bg);scroll-behavior:smooth;scroll-padding-top:calc(76px + env(safe-area-inset-top,0px))}
+body{margin:0;min-height:100%;color:var(--txt);font:16px/1.6 var(--sans);background:
+ radial-gradient(900px 500px at 85% -10%,#00e5ff14,transparent 60%),radial-gradient(800px 500px at 10% 110%,#9fef0012,transparent 60%),
+ linear-gradient(#ffffff05 1px,transparent 1px) 0 0/28px 28px,linear-gradient(90deg,#ffffff05 1px,transparent 1px) 0 0/28px 28px,var(--bg);background-attachment:fixed}
+html[data-rgb="on"] body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;background:repeating-linear-gradient(0deg,#0000 0 2px,#00000018 2px 3px)}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+::selection{background:var(--green);color:#000}
+a{color:var(--cyan)}
+[hidden]{display:none!important}
+
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:#0a111ce6;backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+html[data-rgb="on"] .bar::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:var(--rgb);background-size:300% 100%;animation:flow 8s linear infinite}
+.barin{max-width:1180px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:18px}
+.brand{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--txt);margin-right:auto}
+.logo{position:relative;width:36px;height:36px;display:grid;place-items:center;border-radius:9px;color:var(--green);font:800 14px var(--mono);isolation:isolate;flex-shrink:0}
+.logo::before,.ring::before{content:"";position:absolute;inset:-2px;border-radius:inherit;background:conic-gradient(from var(--a),var(--green),var(--cyan),var(--violet),var(--mag),var(--green));z-index:-2;animation:spin 4s linear infinite}
+.logo::after{content:"";position:absolute;inset:0;border-radius:9px;background:var(--panel);z-index:-1}
+.brand b{font:700 19px var(--disp);letter-spacing:.4px}
+.links{display:flex;gap:4px}
+.links a{color:#a9b5c7;text-decoration:none;font:600 15px var(--disp);padding:6px 12px;border-radius:7px}
+.links a:hover{color:#fff;background:var(--panel)}
+.links a.on{color:var(--green);background:#9fef0014}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+.btn{border:1px solid var(--line);background:var(--panel2);color:var(--txt);padding:10px 16px;border-radius:9px;display:inline-flex;align-items:center;gap:8px;font:600 15px var(--disp);letter-spacing:.4px;text-decoration:none;transition:border-color .15s,box-shadow .15s,transform .15s}
+.btn:hover{border-color:var(--green);box-shadow:0 0 14px #9fef0026;transform:translateY(-1px)}
+.btn.lime{background:var(--green);border-color:var(--green);color:#0a111c}
+.btn svg{width:18px;height:18px;flex-shrink:0}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.25fr .75fr;gap:40px;align-items:center;padding:70px 0 60px}
+.term{font:14px var(--mono);background:#060b13;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:22px;display:inline-block;max-width:100%;overflow:hidden;white-space:nowrap}
+.term .p{color:var(--green)}.term .h{color:var(--cyan)}
+.cursor{display:inline-block;width:8px;height:16px;background:var(--green);vertical-align:-2px;margin-left:2px;animation:blink 1s steps(1) infinite}
+.hi{font:600 13px var(--mono);color:var(--green);letter-spacing:2px}
+.name{font:700 clamp(46px,7vw,84px)/.95 var(--disp);margin:8px 0 12px;letter-spacing:.5px}
+html[data-rgb="on"] .name{background:var(--rgb);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flow 10s linear infinite}
+.headline{font:600 22px var(--disp);color:var(--txt);margin:0 0 6px}
+.loc{font:13px var(--mono);color:var(--muted);margin:0 0 26px}
+.ctas{display:flex;gap:10px;flex-wrap:wrap}
+.avatarwrap{display:grid;place-items:center}
+.ring{position:relative;width:min(300px,70vw);aspect-ratio:1;border-radius:50%;isolation:isolate;display:grid;place-items:center}
+.ring::before{inset:-3px}
+html[data-rgb="on"] .ring::after{content:"";position:absolute;inset:12px;border-radius:50%;background:conic-gradient(from var(--a),var(--green),var(--cyan),var(--violet),var(--mag),var(--green));filter:blur(40px);opacity:.35;z-index:-3;animation:spin 4s linear infinite}
+.ring .face{width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 50% 35%,#16233a,#070c15 70%);display:grid;place-items:center;overflow:hidden}
+.ring img{width:100%;height:100%;object-fit:cover}
+.ring .glyph{font:800 88px var(--mono);color:var(--green);text-shadow:0 0 24px #9fef0080}
+.status{position:absolute;bottom:14%;right:4%;background:#060b13;border:1px solid var(--green);color:var(--green);font:600 11px var(--mono);padding:5px 10px;border-radius:99px;display:flex;gap:6px;align-items:center;box-shadow:0 0 16px #9fef0033}
+.status i{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s ease-in-out infinite}
+
+/* sections */
+section.s{padding:46px 0;border-top:1px solid var(--line)}
+.sh{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.ey{font:600 11px var(--mono);color:var(--green);letter-spacing:2px}.ey::before{content:"// "}
+.sh h2{font:700 36px/1.05 var(--disp);margin:6px 0 0}
+.card{background:linear-gradient(180deg,var(--panel),#0e1624);border:1px solid var(--line);border-radius:14px}
+.about{display:grid;grid-template-columns:1.4fr .6fr;gap:16px}
+.about .txt{padding:24px;font-size:17px}
+.about .txt p{margin:0 0 14px;color:#c6d0dd}.about .txt p:last-child{margin:0}
+.goal{padding:24px;display:flex;flex-direction:column;justify-content:center;gap:10px;border-color:#9fef0055;background:linear-gradient(135deg,#9fef0010,#0e1624)}
+.goal b{font:700 22px/1.2 var(--disp)}
+.goal span{font:11px var(--mono);color:var(--green);letter-spacing:1.5px}
+.skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.skill{padding:18px}
+.skill h3{margin:0 0 12px;font:700 18px var(--disp);color:var(--cyan)}
+.skill h3::before{content:"[+] ";color:var(--green);font:600 13px var(--mono)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font:12px var(--mono);padding:5px 10px;border:1px solid var(--line);border-radius:7px;background:#060b13;color:#c6d0dd}
+.certs{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.cert{padding:18px;display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--txt);position:relative;overflow:hidden}
+.cert::before{content:"";position:absolute;left:0;top:0;right:0;height:2px;background:var(--c,var(--green))}
+.cert b{font:700 20px/1.2 var(--disp)}
+.cert small{font:12px var(--mono);color:var(--muted)}
+.badge{align-self:flex-start;font:600 10px var(--mono);letter-spacing:.8px;padding:3px 8px;border-radius:6px;border:1px solid currentColor}
+.credly{display:flex;flex-wrap:wrap;gap:14px;margin-top:14px}
+.credly .cb{background:#fff;border-radius:12px;padding:6px;border:1px solid var(--line)}
+.plats{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.plat{padding:22px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden}
+.plat::before{content:"";position:absolute;left:0;top:0;right:0;height:2px;background:var(--c);box-shadow:0 0 12px var(--c)}
+.plat h3{margin:0;font:700 24px var(--disp)}
+.plat p{margin:0;color:var(--muted);font-size:14px}
+.plat img{max-width:100%;border-radius:8px}
+.posts{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.post{padding:18px;display:flex;flex-direction:column;gap:8px;text-decoration:none;color:var(--txt);position:relative;overflow:hidden;transition:border-color .15s,transform .15s}
+.post::before{content:"";position:absolute;left:0;top:0;right:0;height:2px;background:var(--c,var(--green))}
+.post:hover{border-color:var(--c,var(--green));transform:translateY(-2px)}
+.post h3{margin:0;font:700 21px/1.15 var(--disp)}
+.post p{margin:0;color:var(--muted);font-size:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.meta{font:11px var(--mono);color:var(--muted);display:flex;gap:8px;align-items:center}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:34px;border:1px dashed var(--line);border-radius:12px;font:13px var(--mono)}
+.contact{padding:30px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.contact h3{margin:0;font:700 28px var(--disp)}
+.contact p{margin:4px 0 0;color:var(--muted)}
+.foot{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;text-align:center;font:11px var(--mono);color:var(--muted)}
+
+.pitch{font-size:17px;color:#c6d0dd;max-width:600px;margin:0 0 10px}
+.proof{padding:0 0 50px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{padding:18px;position:relative;overflow:hidden}
+.stat::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--c);box-shadow:0 0 12px var(--c)}
+.stat .v{font:800 34px/1.1 var(--mono);color:var(--c);text-shadow:0 0 18px color-mix(in srgb,var(--c) 45%,transparent)}
+.stat .l{font:700 16px var(--disp);margin-top:6px}
+.stat .u{font:11px var(--mono);color:var(--muted)}
+.asof{font:11px var(--mono);color:var(--muted);margin-top:10px;text-align:right}
+.hl{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.hl li{font:13px var(--mono);color:#c6d0dd}.hl li::before{content:"▸ ";color:var(--c)}
+.svcs{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.svc{padding:20px;transition:border-color .15s}
+.svc:hover{border-color:var(--cyan)}
+.svc .ic{width:42px;height:42px;border-radius:10px;display:grid;place-items:center;background:#00e5ff14;border:1px solid #00e5ff44;color:var(--cyan);font-size:20px;margin-bottom:12px}
+.svc h3{margin:0 0 6px;font:700 20px var(--disp)}
+.svc p{margin:0;color:var(--muted);font-size:14px}
+.svnote{font:12px var(--mono);color:var(--muted);margin:14px 0 0}
+@media(max-width:900px){.stats{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){.stat .v{font-size:26px}}
+.tl{position:relative;display:grid;gap:14px;padding-left:26px}
+.tl::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--green),var(--cyan),var(--violet),transparent)}
+.tli{position:relative}
+.tld{position:absolute;left:-26px;top:22px;width:16px;height:16px;border-radius:50%;background:var(--bg);border:2px solid var(--cyan)}
+.tli.now .tld{border-color:var(--green);box-shadow:0 0 12px var(--green);background:var(--green)}
+.tlc{padding:18px 20px}
+.tlh{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.tlh b{font:700 21px var(--disp);display:block}
+.org{font:600 13px var(--mono);color:var(--cyan)}
+.tldate{font:12px var(--mono);color:var(--muted);white-space:nowrap}
+.tldate em{font-style:normal;color:var(--green)}
+.tlc ul{margin:0;padding-left:18px;color:#c6d0dd;font-size:15px}
+.tlc li{margin:3px 0}.tlc li::marker{color:var(--green)}
+.edu{font:13px var(--mono);color:var(--muted);margin:16px 0 0}
+@keyframes spin{to{--a:360deg}}
+@keyframes flow{to{background-position:300% 0}}
+@keyframes blink{50%{opacity:0}}
+@keyframes pulse{50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+@media(max-width:860px){.hero{grid-template-columns:1fr;padding:40px 0;gap:30px}.avatarwrap{order:-1}.ring{width:200px}.ring .glyph{font-size:60px}.about{grid-template-columns:1fr}}
+@media(max-width:640px){.barin{flex-wrap:wrap;gap:8px;padding:10px 14px}.links{width:100%;overflow-x:auto}.wrap{padding:0 14px}.sh h2{font-size:30px}}
+</style></head>
+<body>
+<header class="bar"><div class="barin">
+ <a class="brand" href="./"><span class="logo">&gt;_</span><b class="siteName"></b></a>
+ <nav class="links"><a href="./" class="on">Home</a><a href="#experience">Experience</a><a href="#proof" hidden>Proof</a><a href="#certs" id="navCerts">Credentials</a><a href="#services" id="navSvc">Services</a><a href="writeups/">Write-ups</a><a href="centers/">Centers</a></nav>
+</div></header>
+
+<main class="wrap">
+ <section class="hero">
+  <div>
+   <div class="term" aria-hidden="true"><span class="p">visitor@<span id="host"></span></span>:<span class="h">~</span>$ <span id="typed"></span><span class="cursor"></span></div>
+   <div class="hi">HELLO, I'M</div>
+   <h1 class="name" id="pName"></h1>
+   <p class="headline" id="pHead"></p>
+   <p class="pitch" id="pPitch"></p>
+   <p class="loc" id="pLoc"></p>
+   <div class="ctas" id="ctas"></div>
+  </div>
+  <div class="avatarwrap"><div class="ring"><div class="face" id="face"></div><div class="status"><i></i>ON DUTY</div></div></div>
+ </section>
+
+ <section class="proof" id="proof"><div class="stats" id="pStats"></div><div class="asof" id="pAsof"></div></section>
+
+ <section class="s" id="about"><div class="sh"><div><div class="ey">WHOAMI</div><h2>About me</h2></div></div>
+  <div class="about"><div class="card txt" id="pAbout"></div><div class="card goal" id="pGoal"><span>STATUS</span><b></b></div></div>
+ </section>
+
+ <section class="s" id="experience"><div class="sh"><div><div class="ey">CAREER LOG</div><h2>Experience</h2></div><a class="btn" id="cvBtn2" download>⬇ Download CV</a></div>
+  <div class="tl" id="pExp"></div><p class="edu" id="pEdu"></p></section>
+
+ <section class="s" id="skills"><div class="sh"><div><div class="ey">TOOLKIT</div><h2>Skills &amp; tools</h2></div></div><div class="skills" id="pSkills"></div></section>
+
+ <section class="s" id="certs"><div class="sh"><div><div class="ey">VERIFIED</div><h2>Credentials</h2></div><a class="btn" id="credlyBtn" target="_blank" rel="noopener">View all on Credly ↗</a></div>
+  <div class="certs" id="pCerts"></div><div class="credly" id="pCredly"></div>
+ </section>
+
+ <section class="s" id="platforms"><div class="sh"><div><div class="ey">TRAINING GROUNDS</div><h2>Platforms</h2></div></div><div class="plats" id="pPlats"></div></section>
+
+ <section class="s" id="services"><div class="sh"><div><div class="ey">WORK WITH ME</div><h2>Freelance services</h2></div><a class="btn lime" href="#contact">Discuss a project →</a></div>
+  <div class="svcs" id="pSvcs"></div><p class="svnote" id="pSvNote"></p></section>
+
+ <section class="s" id="writeups"><div class="sh"><div><div class="ey">FIELD REPORTS</div><h2>Latest write-ups</h2></div><a class="btn" href="writeups/">All write-ups →</a></div><div class="posts" id="pPosts"><div class="empty">Loading…</div></div></section>
+
+ <section class="s" id="contact"><div class="card contact"><div><h3>Hiring or need a hand?</h3><p id="pGoal2"></p></div><div class="ctas" id="contacts"></div></div></section>
+</main>
+<footer class="foot">© <span id="yr"></span> <span class="siteName"></span> · Built with curiosity and too much coffee.</footer>
+
+<script>
+const P=PROFILE,$=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safe=u=>{try{const x=new URL(u,location.href);return /^(https?|mailto):$/.test(x.protocol)?x.href:''}catch(e){return ''}};
+const I={
+ li:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45z"/></svg>',
+ gh:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 0-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.3-3.1-.2-.4-.6-1.6 0-3.2 0 0 1-.3 3.4 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8.1 3.2.8.8 1.3 1.9 1.3 3.1 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1.1.9 2.2v3.3c0 .3.1.7.8.6A12 12 0 0 0 12 .3"/></svg>',
+ mail:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
+ ext:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4h6v6M20 4l-9 9M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg>'
+};
+document.querySelectorAll('.siteName').forEach(e=>e.textContent=P.siteName);document.title=P.siteName;
+$('yr').textContent=new Date().getFullYear();
+$('host').textContent=(P.siteName||'site').toLowerCase().replace(/[^a-z0-9]+/g,'-');
+$('pName').textContent=P.name;$('pHead').textContent=P.headline;
+$('pLoc').textContent=P.location?'📍 '+P.location:'';$('pLoc').hidden=!P.location;
+$('face').innerHTML=P.photo?'<img src="'+esc(P.photo)+'" alt="'+esc(P.name)+'" onerror="this.parentNode.innerHTML=\'<span class=glyph>&gt;_</span>\'">':'<span class="glyph">&gt;_</span>';
+
+// typing effect
+(function(){const w=P.typing&&P.typing.length?P.typing:['whoami'],el=$('typed');let i=0,j=0,del=false;
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches){el.textContent=w[0];return}
+ (function tick(){const s=w[i%w.length];el.textContent=s.slice(0,j);if(!del&&j<s.length){j++;setTimeout(tick,90)}else if(!del){del=true;setTimeout(tick,1600)}else if(j>0){j--;setTimeout(tick,40)}else{del=false;i++;setTimeout(tick,300)}})()})();
+
+// CTAs
+const L=P.links||{};
+$('ctas').innerHTML=(P.resume?'<a class="btn lime" href="'+esc(P.resume)+'" download>⬇ Download CV</a>':'')+(L.linkedin?'':'')+'<a class="btn" href="writeups/">▤ Write-ups</a>'+
+ (L.linkedin?'<a class="btn" href="'+esc(safe(L.linkedin))+'" target="_blank" rel="noopener">'+I.li+'LinkedIn</a>':'')+
+ (L.github?'<a class="btn" href="'+esc(safe(L.github))+'" target="_blank" rel="noopener">'+I.gh+'GitHub</a>':'');
+
+$('pPitch').textContent=P.pitch||'';$('pPitch').hidden=!P.pitch;
+// proof stats
+const CM={red:'var(--red)',cyan:'var(--cyan)',green:'var(--green)',violet:'var(--violet)',mag:'var(--mag)',amber:'var(--amber)'};
+$('pStats').innerHTML=(P.stats||[]).map(s=>'<div class="card stat" style="--c:'+(CM[s.color]||'var(--green)')+'"><div class="v">'+esc(s.value)+'</div><div class="l">'+esc(s.label)+'</div><div class="u">'+esc(s.sub||'')+'</div></div>').join('');
+$('pAsof').textContent=P.statsAsOf?'stats as of '+P.statsAsOf:'';$('proof').hidden=!(P.stats||[]).length;
+// services
+$('pSvcs').innerHTML=(P.services||[]).map(s=>'<div class="card svc"><div class="ic">'+esc(s.icon||'◆')+'</div><h3>'+esc(s.title)+'</h3><p>'+esc(s.text)+'</p></div>').join('');
+$('pSvNote').textContent=P.servicesNote||'';$('services').hidden=$('navSvc').hidden=!(P.services||[]).length;
+// experience
+$('pExp').innerHTML=(P.experience||[]).map(x=>'<div class="tli'+(x.current?' now':'')+'"><div class="tld"></div><div class="card tlc"><div class="tlh"><div><b>'+esc(x.role)+'</b><span class="org">'+esc(x.org)+'</span></div><span class="tldate">'+esc(x.date)+(x.current?' <em>● current</em>':'')+'</span></div><ul>'+(x.points||[]).map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul></div></div>').join('');
+$('pEdu').textContent=P.education?'🎓 '+P.education:'';$('experience').hidden=!(P.experience||[]).length;
+if(P.resume)$('cvBtn2').href=P.resume;else $('cvBtn2').hidden=true;
+// about
+$('pAbout').innerHTML=(P.about||[]).map(p=>'<p>'+esc(p)+'</p>').join('');$('about').hidden=!(P.about||[]).length;
+$('pGoal').querySelector('b').textContent=P.goal||'';$('pGoal').hidden=!P.goal;
+$('pGoal2').textContent=P.goal||'Reach out on any of these channels.';
+
+// skills
+const SK=Object.entries(P.skills||{}).filter(([k,v])=>v&&v.length);
+$('pSkills').innerHTML=SK.map(([k,v])=>'<div class="card skill"><h3>'+esc(k)+'</h3><div class="chips">'+v.map(t=>'<span class="chip">'+esc(t)+'</span>').join('')+'</div></div>').join('');
+$('skills').hidden=!SK.length;
+
+// certifications + Credly
+const C=P.certifications||[],CB=(P.credlyBadgeIds||[]).filter(Boolean);
+const scol=s=>/progress/i.test(s||'')?'var(--amber)':/plan/i.test(s||'')?'var(--violet)':'var(--green)';
+$('pCerts').innerHTML=C.map(c=>{const u=safe(c.url||'');const inner='<span class="badge" style="color:'+scol(c.status)+'">'+esc((c.status||'Earned').toUpperCase())+'</span><b>'+esc(c.name)+'</b><small>'+esc([c.issuer,c.date].filter(Boolean).join(' · '))+'</small>';
+ return u?'<a class="card cert" style="--c:'+scol(c.status)+'" href="'+esc(u)+'" target="_blank" rel="noopener">'+inner+'</a>':'<div class="card cert" style="--c:'+scol(c.status)+'">'+inner+'</div>'}).join('');
+$('pCerts').hidden=!C.length;
+if(CB.length){$('pCredly').innerHTML=CB.map(id=>'<div class="cb" data-iframe-width="150" data-iframe-height="270" data-share-badge-id="'+esc(id)+'" data-share-badge-host="https://www.credly.com"></div>').join('');
+ const s=document.createElement('script');s.async=true;s.src='https://cdn.credly.com/assets/utilities/embed.js';document.body.appendChild(s)}
+$('pCredly').hidden=!CB.length;
+const cp=safe(P.credlyProfile||'');if(cp)$('credlyBtn').href=cp;else $('credlyBtn').hidden=true;
+const hasCerts=C.length||CB.length||cp;$('certs').hidden=!hasCerts;$('navCerts').hidden=!hasCerts;
+
+// platforms
+const T=P.tryhackme||{},H=P.hackthebox||{};const plats=[];
+if(T.url||T.username){const u=safe(T.url||('https://tryhackme.com/p/'+T.username));
+ plats.push('<div class="card plat" style="--c:var(--red)"><h3>TryHackMe</h3><p>SOC Level 1 path, blue-team rooms and challenges.</p>'+((T.highlights||[]).length?'<ul class="hl">'+T.highlights.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':'')+
+ (T.username?'<img src="https://tryhackme-badges.s3.amazonaws.com/'+encodeURIComponent(T.username)+'.png" alt="TryHackMe badge for '+esc(T.username)+'" onerror="this.remove()">':'')+
+ '<a class="btn" href="'+esc(u)+'" target="_blank" rel="noopener">'+I.ext+'View profile</a></div>')}
+if(H.url){plats.push('<div class="card plat" style="--c:var(--green)"><h3>HackTheBox</h3><p>Sherlocks, DFIR investigations, seasons and CTFs.</p>'+((H.highlights||[]).length?'<ul class="hl">'+H.highlights.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':'')+'<a class="btn" href="'+esc(safe(H.url))+'" target="_blank" rel="noopener">'+I.ext+'View profile</a></div>')}
+$('pPlats').innerHTML=plats.join('');$('platforms').hidden=!plats.length;
+
+// contacts
+$('contacts').innerHTML=(L.linkedin?'<a class="btn lime" href="'+esc(safe(L.linkedin))+'" target="_blank" rel="noopener">'+I.li+'LinkedIn</a>':'')+
+ (L.email?'<a class="btn" href="mailto:'+esc(L.email)+'">'+I.mail+esc(L.email)+'</a>':'')+
+ (L.github?'<a class="btn" href="'+esc(safe(L.github))+'" target="_blank" rel="noopener">'+I.gh+'GitHub</a>':'');
+$('contact').hidden=!(L.linkedin||L.email||L.github);
+
+// latest write-ups (Markdown files on GitHub)
+(async()=>{const box=$('pPosts');
+ try{const r=await fetch('writeups/posts/index.json?t='+Date.now(),{cache:'no-store'});const all=r.ok?await r.json():[];
+  const posts=(Array.isArray(all)?all:[]).sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,3);
+  const col=p=>p==='TryHackMe'?'var(--red)':p==='HackTheBox'?'var(--green)':'var(--violet)';
+  box.innerHTML=posts.length?posts.map(p=>'<a class="card post" style="--c:'+col(p.platform)+'" href="writeups/#/p/'+encodeURIComponent(p.slug)+'"><div class="meta"><span style="color:'+col(p.platform)+'">'+esc(p.platform||'Other')+'</span>'+(p.difficulty?'<span>· '+esc(p.difficulty)+'</span>':'')+'<span>· '+esc(p.date||'')+'</span></div><h3>'+esc(p.title||'Untitled')+'</h3>'+(p.summary?'<p>'+esc(p.summary)+'</p>':'')+'</a>').join('')
+   :'<div class="empty">First write-ups coming soon.</div>';
+ }catch(e){box.innerHTML='<div class="empty">First write-ups coming soon.</div>'}})();
+</script></body></html>

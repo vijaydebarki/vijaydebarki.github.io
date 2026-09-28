@@ -4,253 +4,11 @@
 <title>SOC L1 // Command Center</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
-<style>
-@property --a{syntax:'<angle>';inherits:false;initial-value:0deg}
-:root{--bg:#0a111c;--bg2:#0e1726;--side:#0c1420;--panel:#111b2a;--panel2:#16233a;--field:#0b1320;--line:#1e2c42;--row:#18253a;--txt:#e6edf6;--muted:#8391a7;--green:#9fef00;--cyan:#00e5ff;--mag:#ff2bd6;--red:#ff3e5b;--amber:#ffb800;--violet:#8f5bff;
---rgb:linear-gradient(90deg,var(--green),var(--cyan),var(--violet),var(--mag),var(--green));
---mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Consolas,monospace;--disp:"Rajdhani","Segoe UI",system-ui,sans-serif;--sans:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color-scheme:dark}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0a111c;--txt:#e6edf6}}
-:root[data-theme="dark"]{--bg:#0a111c;--txt:#e6edf6}
-:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg)}
-*,*::before,*::after{box-sizing:border-box}
-body{margin:0;min-height:100%;color:var(--txt);font:14px/1.5 var(--sans);background:
- radial-gradient(900px 500px at 85% -10%,#00e5ff14,transparent 60%),
- radial-gradient(800px 500px at 10% 110%,#9fef0012,transparent 60%),
- linear-gradient(#ffffff05 1px,transparent 1px) 0 0/28px 28px,
- linear-gradient(90deg,#ffffff05 1px,transparent 1px) 0 0/28px 28px,var(--bg);background-attachment:fixed}
-html[data-rgb="on"] body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;background:repeating-linear-gradient(0deg,#0000 0 2px,#00000018 2px 3px)}
-button,input,textarea{font:inherit}
-button{cursor:pointer}
-:focus-visible{outline:2px solid var(--green);outline-offset:2px}
-::selection{background:var(--green);color:#000}
-.app{min-height:100vh;display:flex}
-
-/* sidebar */
-.side{position:fixed;width:256px;top:env(safe-area-inset-top,0px);bottom:0;left:0;background:linear-gradient(180deg,var(--side),#09101a);border-right:1px solid var(--line);padding:18px 12px;display:flex;flex-direction:column}
-html[data-rgb="on"] .side::after{content:"";position:absolute;top:0;right:-1px;width:1px;height:100%;background:linear-gradient(180deg,var(--green),var(--cyan),var(--mag),var(--green));background-size:100% 300%;animation:flow 8s linear infinite}
-.brand{display:flex;gap:12px;align-items:center;padding:4px 8px 18px;border-bottom:1px solid var(--line);margin-bottom:14px}
-.logo{position:relative;width:42px;height:42px;display:grid;place-items:center;border-radius:10px;background:var(--panel);color:var(--green);font:800 16px var(--mono);flex-shrink:0;isolation:isolate}
-.logo::before{content:"";position:absolute;inset:-2px;border-radius:12px;background:conic-gradient(from var(--a),var(--green),var(--cyan),var(--violet),var(--mag),var(--green));z-index:-1;animation:spin 4s linear infinite}
-.logo::after{content:"";position:absolute;inset:0;border-radius:10px;background:var(--panel);z-index:-1}
-.brand b{font:700 18px/1 var(--disp);letter-spacing:.5px;display:block}
-.brand small{display:block;color:var(--green);font:600 10px var(--mono);letter-spacing:1.5px;margin-top:3px}
-.navlbl{font:600 10px var(--mono);color:var(--muted);letter-spacing:1.5px;padding:4px 12px 6px}
-.nav{display:grid;gap:3px}
-.nav button{position:relative;border:0;background:transparent;color:#a9b5c7;text-align:left;padding:10px 12px;border-radius:8px;white-space:nowrap;font:600 15px var(--disp);letter-spacing:.3px;display:flex;gap:10px;align-items:center}
-.nav button .ic{width:18px;text-align:center;color:var(--muted);font-family:var(--mono);font-size:13px}
-.nav button:hover{background:var(--panel);color:#fff}
-.nav button.on{background:linear-gradient(90deg,#9fef001f,transparent);color:#fff}
-.nav button.on .ic{color:var(--green)}
-.nav button.on::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:3px;background:var(--green);box-shadow:0 0 10px var(--green)}
-.foot{margin-top:auto;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);font:11px/1.6 var(--mono);color:var(--muted)}
-.foot .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);margin-right:6px;animation:pulse 2s ease-in-out infinite}
-
-/* main */
-.main{margin-left:256px;padding:22px 32px 40px;width:calc(100% - 256px);min-width:0}
-.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
-.crumb{font:600 11px var(--mono);color:var(--muted);letter-spacing:1px}
-.crumb::before{content:"~/";color:var(--green)}
-.btn{border:1px solid var(--line);background:var(--panel2);color:var(--txt);padding:8px 14px;border-radius:8px;display:inline-block;font:600 14px var(--disp);letter-spacing:.4px;text-decoration:none;transition:border-color .15s,box-shadow .15s}
-.btn:hover{border-color:var(--green);box-shadow:0 0 0 1px #9fef0033,0 0 14px #9fef0026}
-.btn.lime{background:var(--green);border-color:var(--green);color:#0a111c}
-.btn.lime:hover{box-shadow:0 0 18px #9fef0080}
-.btn.sm{padding:4px 10px;font-size:13px}
-.actions{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap}
-.view{display:none}.view.on{display:block;animation:in .25s ease-out}
-
-/* terminal */
-.term{font:13px/1.6 var(--mono);background:#060b13;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:18px;overflow-x:auto;white-space:nowrap}
-.term .p{color:var(--green)}.term .h{color:var(--cyan)}.term .o{color:var(--muted)}
-.cursor{display:inline-block;width:8px;height:15px;background:var(--green);vertical-align:-2px;margin-left:4px;animation:blink 1s steps(1) infinite}
-
-.hero{display:flex;justify-content:space-between;align-items:end;gap:14px;margin-bottom:18px}
-.ey{font:600 11px var(--mono);color:var(--green);letter-spacing:2px}
-.ey::before{content:"// "}
-.hero h1{font:700 38px/1.05 var(--disp);margin:6px 0 4px;letter-spacing:.5px}
-html[data-rgb="on"] .hero h1{background:var(--rgb);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flow 10s linear infinite}
-.hero p{color:var(--muted);margin:0}
-
-.card{background:linear-gradient(180deg,var(--panel),#0e1624);border:1px solid var(--line);border-radius:12px}
-.panel{padding:18px;margin-bottom:14px}
-.pt{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
-.pt h3{margin:0;font:700 16px var(--disp);letter-spacing:.6px}
-.pt span{color:var(--muted);font:11px var(--mono)}
-.muted{color:var(--muted)}
-
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
-.kpi{padding:16px;position:relative;overflow:hidden}
-.kpi::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--c,var(--green));box-shadow:0 0 12px var(--c,var(--green))}
-.kpi:nth-child(2){--c:var(--cyan)}.kpi:nth-child(3){--c:var(--violet)}.kpi:nth-child(4){--c:var(--mag)}
-.kpi label{display:block;color:var(--muted);font:600 10px var(--mono);letter-spacing:1.5px;text-transform:uppercase}
-.num{font:800 32px/1.1 var(--mono);margin:8px 0 4px;color:var(--c,var(--green));text-shadow:0 0 18px color-mix(in srgb,var(--c,var(--green)) 45%,transparent)}
-.sub{font-size:12px;color:var(--muted)}
-
-/* RGB border frame */
-.rgb{position:relative;isolation:isolate;border:0;border-radius:14px;padding:1.5px;background:var(--line)}
-html[data-rgb="on"] .rgb{background:conic-gradient(from var(--a),var(--green),var(--cyan),var(--violet),var(--mag),var(--green));animation:spin 6s linear infinite}
-html[data-rgb="on"] .rgb::before{content:"";position:absolute;inset:6px;border-radius:14px;background:inherit;filter:blur(18px);opacity:.35;z-index:-1}
-.rgb>.in{border-radius:12.5px;background:linear-gradient(135deg,#101a2a,#0b1320);padding:20px}
-.mission{display:flex;justify-content:space-between;gap:20px;align-items:center}
-.mission .sec{color:var(--cyan);font:600 11px var(--mono);letter-spacing:1.5px}
-.mission h2{margin:6px 0;font:700 30px/1.1 var(--disp)}
-.missionwrap{margin-bottom:14px}
-.mtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.mtop h3{margin:0;font:700 16px var(--disp);letter-spacing:.6px}
-.pill{font:600 10px var(--mono);letter-spacing:1px;padding:4px 10px;border-radius:99px;border:1px solid var(--amber);color:var(--amber)}
-
-.grid{display:grid;grid-template-columns:1.3fr .9fr;gap:14px}
-.progress{height:6px;background:#0a1220;border:1px solid var(--row);border-radius:99px;overflow:hidden}
-.progress i{display:block;height:100%;background:var(--green);box-shadow:0 0 10px var(--green)}
-html[data-rgb="on"] .progress i{background:var(--rgb);background-size:300% 100%;animation:flow 6s linear infinite}
-.srow{padding:9px 0;border-bottom:1px dashed var(--row)}
-.rtop{display:flex;justify-content:space-between;gap:8px;font-size:13px;margin-bottom:6px}
-.rtop b{font:600 15px var(--disp);letter-spacing:.3px}
-.rtop span{color:var(--muted);white-space:nowrap;font:11px var(--mono)}
-.quick{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.quick button{text-align:left;padding:14px;background:var(--panel2);color:var(--txt);border:1px solid var(--line);border-radius:10px;transition:border-color .15s,transform .15s}
-.quick button:hover{border-color:var(--cyan);transform:translateY(-1px)}
-.quick b{font:700 16px var(--disp)}
-.quick small{display:block;color:var(--muted);margin-top:2px;font:11px var(--mono)}
-
-.search{display:flex;gap:8px;margin-bottom:12px;position:relative}
-.search::before{content:">";position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--green);font:700 14px var(--mono)}
-.search input{flex:1;min-width:0;background:var(--field);color:var(--txt);border:1px solid var(--line);padding:11px 12px 11px 28px;border-radius:8px;font-family:var(--mono);font-size:13px}
-.search input:focus{border-color:var(--green);outline:0;box-shadow:0 0 0 3px #9fef001f}
-.tw{overflow-x:auto;max-width:100%}
-.table{width:100%;border-collapse:collapse}
-.table th,.table td{padding:10px;border-bottom:1px solid var(--row);text-align:left;vertical-align:middle}
-.table th{font:600 10px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:1.2px}
-.table td{font-size:13px}
-.table tbody tr:hover{background:#ffffff05}
-.table td b{font:600 15px var(--disp);letter-spacing:.3px}
-.tag{display:inline-block;padding:3px 9px;border-radius:6px;font:600 10px var(--mono);letter-spacing:.8px;white-space:nowrap;border:1px solid currentColor;background:color-mix(in srgb,currentColor 10%,transparent)}
-.done{color:var(--green)}.prog{color:var(--cyan)}.not{color:var(--amber)}.lock{color:var(--red)}.ready{color:var(--green);box-shadow:0 0 10px #9fef0040}
-.sechdrow{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:22px 0 6px}
-.sechdrow:first-child{margin-top:0}
-.sechd{color:var(--cyan);font:600 12px var(--mono);letter-spacing:1.2px;margin:0}
-.sechd::before{content:"[+] ";color:var(--green)}
-.acts{white-space:nowrap}.acts .btn{margin-right:4px}
-.assrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.casegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.case{padding:14px;border-top:2px solid var(--mag)}
-.case h3{margin:0 0 8px;font:800 15px var(--mono);color:var(--mag)}
-.case input,.linkin{width:100%;background:var(--field);color:var(--txt);border:1px solid var(--line);border-radius:7px;padding:8px 10px}
-.case textarea{width:100%;min-height:130px;background:#060b13;color:#cfe8b0;border:1px solid var(--line);border-radius:7px;padding:10px;margin-top:8px;resize:vertical;font:12px/1.6 var(--mono)}
-.case input:focus,.case textarea:focus,.linkin:focus{border-color:var(--green);outline:0}
-.case .row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-.toast{position:fixed;right:24px;bottom:calc(24px + env(safe-area-inset-bottom,0px));background:#060b13;color:var(--green);border:1px solid var(--green);box-shadow:0 0 20px #9fef0040;padding:11px 16px;border-radius:8px;display:none;z-index:60;max-width:calc(100% - 48px);font:12px var(--mono)}
-.toast::before{content:"[✓] "}
-.toast.show{display:block;animation:in .2s ease-out}
-.empty{text-align:center;color:var(--muted);padding:30px;border:1px dashed var(--line);border-radius:10px;font:12px var(--mono)}
-.modal{position:fixed;inset:0;background:#02060cc0;backdrop-filter:blur(3px);display:none;place-items:center;z-index:70;padding:20px}
-.modal.show{display:grid}
-.modal .box{max-width:440px;width:100%;padding:22px;border-color:var(--green);box-shadow:0 0 30px #9fef0026}
-.modal h3{margin:0 0 8px;font:700 20px var(--disp)}
-.modal .actions{margin-top:16px;justify-content:flex-end}
-.set{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.switch{width:46px;height:26px;border-radius:99px;border:1px solid var(--line);background:var(--field);position:relative;flex-shrink:0}
-.switch::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--muted);transition:transform .2s,background .2s}
-.switch[aria-checked="true"]{border-color:var(--green)}
-.switch[aria-checked="true"]::after{transform:translateX(20px);background:var(--green);box-shadow:0 0 10px var(--green)}
-
-.who{color:var(--txt);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.gate{position:fixed;inset:0;z-index:80;display:none;place-items:center;padding:20px;overflow:auto;background:
- radial-gradient(700px 400px at 80% 0%,#00e5ff1c,transparent 60%),radial-gradient(700px 400px at 10% 100%,#9fef0018,transparent 60%),
- linear-gradient(#ffffff06 1px,transparent 1px) 0 0/28px 28px,linear-gradient(90deg,#ffffff06 1px,transparent 1px) 0 0/28px 28px,var(--bg)}
-.gate.show{display:grid}
-.gbox{width:100%;max-width:400px;padding:26px;border-radius:16px;background:linear-gradient(180deg,var(--panel),#0c1422);border:1px solid var(--line);position:relative;isolation:isolate}
-html[data-rgb="on"] .gbox::before{content:"";position:absolute;inset:-1.5px;border-radius:17px;background:conic-gradient(from var(--a),var(--green),var(--cyan),var(--violet),var(--mag),var(--green));z-index:-2;animation:spin 6s linear infinite}
-html[data-rgb="on"] .gbox::after{content:"";position:absolute;inset:0;border-radius:16px;background:linear-gradient(180deg,var(--panel),#0c1422);z-index:-1}
-.glogo{display:flex;gap:12px;align-items:center;margin-bottom:16px}
-.glogo b{font:700 20px/1 var(--disp);display:block}.glogo small{color:var(--green);font:600 10px var(--mono);letter-spacing:1.5px}
-.gterm{font:12px var(--mono);background:#060b13;border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin-bottom:18px;color:var(--txt)}
-.gterm .p{color:var(--green)}
-.sh{white-space:normal;cursor:text}
-.sh .h{color:var(--cyan)}
-.shout{max-height:180px;overflow-y:auto;white-space:pre-wrap;word-break:break-word}
-.gterm .shout{max-height:150px}
-.shout:empty{display:none}
-.shout .c{color:var(--txt)}.shout .ok{color:var(--green)}.shout .er{color:var(--red)}.shout .dim{color:var(--muted)}.shout .cy{color:var(--cyan)}.shout .mg{color:var(--mag)}.shout .am{color:var(--amber)}
-.shline{display:flex;align-items:center;gap:8px;cursor:text}
-.shp{white-space:nowrap}
-.shin{flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--txt);font:inherit;caret-color:var(--green);padding:0}
-.shin::placeholder{color:#3d4b61}
-.sh:focus-within{border-color:#9fef0066;box-shadow:0 0 0 1px #9fef0022,0 0 18px #9fef0014}
-.gbox h2{font:700 24px var(--disp);margin:0 0 14px}
-.gbtn{width:100%;display:flex;gap:10px;justify-content:center;align-items:center;padding:11px;background:#fff;color:#1f1f1f;border-color:#fff}
-.gbtn:hover{box-shadow:0 0 18px #ffffff40;border-color:#fff}
-.gor{display:flex;align-items:center;gap:10px;color:var(--muted);font:11px var(--mono);margin:16px 0}
-.gor::before,.gor::after{content:"";flex:1;height:1px;background:var(--line)}
-.glbl{display:block;font:600 10px var(--mono);letter-spacing:1.2px;color:var(--muted);margin:10px 0 5px;text-transform:uppercase}
-.grow{display:flex;gap:8px;margin-top:14px}.grow .btn{flex:1}
-.glink{background:none;border:0;color:var(--cyan);font:12px var(--mono);padding:10px 0 0}
-.glink:hover{text-decoration:underline}
-.gmsg{font:12px var(--mono);margin-top:10px;min-height:1em}.gmsg.bad{color:var(--red)}.gmsg.ok{color:var(--green)}
-button:disabled{opacity:.6;cursor:wait}
-.sitelinks{display:flex;gap:6px;margin:-4px 0 12px}
-.sitelinks a{flex:1;text-align:center;padding:6px;border:1px solid var(--line);border-radius:8px;color:var(--muted);font:600 11px var(--mono);text-decoration:none}
-.sitelinks a:hover{color:var(--green);border-color:var(--green)}
-.notesgrid{display:grid;grid-template-columns:320px 1fr;gap:14px;align-items:start}
-.nlistp{max-height:calc(100vh - 220px);overflow:auto}
-.nitem{display:block;width:100%;text-align:left;background:transparent;border:1px solid transparent;border-left:3px solid transparent;color:var(--txt);padding:10px 12px;border-radius:8px;margin-bottom:4px}
-.nitem:hover{background:var(--panel2)}
-.nitem.on{background:var(--panel2);border-color:var(--line);border-left-color:var(--green)}
-.nitem b{display:block;font:600 15px var(--disp)}
-.nitem span{display:block;color:var(--muted);font:11px var(--mono);margin-top:2px}
-.nitem .ntags{color:var(--cyan)}
-.nhead{display:flex;gap:10px;align-items:center;margin-bottom:10px}
-.ntitle{flex:1;min-width:0;background:transparent;border:0;border-bottom:1px solid var(--line);color:var(--txt);font:700 24px var(--disp);padding:4px 0}
-.ntitle:focus{outline:0;border-color:var(--green)}
-.nmeta{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}.nmeta .linkin{flex:1;min-width:180px;font:12px var(--mono)}
-.nbody{width:100%;min-height:calc(100vh - 330px);background:#060b13;color:#d6f5b0;border:1px solid var(--line);border-radius:8px;padding:14px;resize:vertical;font:13px/1.7 var(--mono)}
-.nbody:focus{outline:0;border-color:var(--green)}
-.hasnote{border-color:var(--cyan)}
-.mdview{line-height:1.7;font-size:15px;overflow-wrap:anywhere}
-.mdview h1,.mdview h2,.mdview h3{font-family:var(--disp);margin:1.1em 0 .4em}.mdview h1{font-size:28px}.mdview h2{font-size:22px;color:var(--cyan)}.mdview h3{font-size:18px;color:var(--green)}
-.mdview a{color:var(--cyan)}
-.mdview code{font:13px var(--mono);background:#060b13;border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--green)}
-.mdview pre{background:#060b13;border:1px solid var(--line);border-left:3px solid var(--green);border-radius:8px;padding:14px;overflow-x:auto}
-.mdview pre code{border:0;padding:0;background:none;color:#d6f5b0}
-.mdview blockquote{margin:0;padding:6px 14px;border-left:3px solid var(--mag);color:var(--muted);background:#ff2bd60a}
-.mdview img{max-width:100%;border-radius:8px;border:1px solid var(--line)}
-.mdview table{border-collapse:collapse;display:block;overflow-x:auto}.mdview th,.mdview td{border:1px solid var(--line);padding:6px 10px}
-@media(max-width:900px){.notesgrid{grid-template-columns:1fr}.nlistp{max-height:none}.nbody{min-height:320px}}
-.gnote{font:12px var(--mono);color:var(--muted);margin:14px 0 0}
-.pill:empty{display:none}
-.acgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.acsub{font:600 10px var(--mono);letter-spacing:1.4px;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
-.acrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed var(--row)}
-.acrow b{display:block;font:600 15px var(--disp)}.acrow span{display:block;font:11px var(--mono);color:var(--muted);overflow-wrap:anywhere}
-.acadd{display:flex;gap:8px;margin-bottom:6px}.acadd .linkin{flex:1}
-@media(max-width:800px){.acgrid{grid-template-columns:1fr}}
-@keyframes spin{to{--a:360deg}}
-@keyframes flow{to{background-position:300% 0}}
-@keyframes blink{50%{opacity:0}}
-@keyframes pulse{50%{opacity:.35}}
-@keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
-
-@media(max-width:1050px){.kpis{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.casegrid{grid-template-columns:1fr 1fr}}
-@media(max-width:720px){
- .app{display:block}
- .side{position:sticky;top:0;width:100%;height:auto;padding:10px 12px 8px;border-right:0;border-bottom:1px solid var(--line);z-index:20;padding-top:calc(10px + env(safe-area-inset-top,0px));margin-top:calc(-1 * env(safe-area-inset-top,0px))}
- html[data-rgb="on"] .side::after{top:auto;bottom:-1px;right:0;left:0;width:100%;height:1px;background:var(--rgb);background-size:300% 100%}
- .brand{padding:0 4px 10px;margin-bottom:8px}
- .navlbl,.foot{display:none}
- .nav{display:flex;overflow-x:auto;gap:4px;padding-bottom:2px;scrollbar-width:none}
- .nav button{padding:7px 10px;font-size:14px}
- .nav button.on::before{left:8px;right:8px;top:auto;bottom:0;width:auto;height:2px}
- .main{margin:0;width:100%;padding:16px 14px 30px}
- .kpis{grid-template-columns:1fr 1fr}.casegrid,.quick{grid-template-columns:1fr}
- .mission,.hero{display:block}.actions{margin-top:12px}
- .hero h1{font-size:30px}.mission h2{font-size:24px}.num{font-size:26px}
-}
-</style></head>
+<link rel="stylesheet" href="../assets/center.css"></head>
 <body><div class="app">
 <aside class="side">
  <div class="brand"><div class="logo">&gt;_</div><div><b>SOC LEVEL 1</b><small>COMMAND CENTER</small></div></div>
- <div class="sitelinks"><a href="../">⌂ Home</a><a href="../writeups/">▤ Write-ups</a></div>
+ <div class="sitelinks"><a href="../">⌂ Home</a><a href="../centers/">◈ Centers</a><a href="../writeups/">▤ Posts</a></div>
  <div class="navlbl">NAVIGATION</div>
  <nav class="nav">
   <button class="on" data-v="dash"><span class="ic">⌂</span>Command Center</button>
@@ -283,7 +41,7 @@ button:disabled{opacity:.6;cursor:wait}
   <div class="actions"><button class="btn lime" onclick="start()">▶ Start room</button><button class="btn" onclick="done()">Mark done</button></div></div>
  </div></div>
  <div class="grid">
-  <div class="card panel"><div class="pt"><h3>Section progress</h3><span>14 sections</span></div><div id="sprogress"></div></div>
+  <div class="card panel"><div class="pt"><h3>Section progress</h3><span id="seccount">14 sections</span></div><div id="sprogress"></div></div>
   <div class="card panel"><div class="pt"><h3>Quick actions</h3><span>operator workflow</span></div>
    <div class="quick">
     <button onclick="go('assess')"><b>✓ Assessment</b><small>knowledge gate</small></button>
@@ -308,7 +66,7 @@ button:disabled{opacity:.6;cursor:wait}
 
 <section id="cases" class="view"><div class="hero"><div><div class="ey">SOC INVESTIGATION LAB</div><h1>SOC Casebook</h1><p>Alert → Evidence → Timeline → IOC/TTP → MITRE → Verdict → Response → Report.</p></div><button class="btn lime" onclick="newCase()">+ New case</button></div><div id="caselist" class="casegrid"></div></section>
 
-<section id="notes" class="view"><div class="hero"><div><div class="ey">KNOWLEDGE BASE</div><h1>Notes</h1><p>Private study notes. Markdown supported: <code>#</code> headings, <code>**bold**</code>, <code>`code`</code>, <code>```</code> code blocks, <code>- lists</code>.</p></div><button class="btn lime" onclick="newNote()">+ New note</button></div>
+<section id="notes" class="view"><div class="hero"><div><div class="ey">KNOWLEDGE BASE</div><h1>Notes</h1><p><span class="vmini" id="vaultMini"></span> Private study notes. Markdown supported: <code>#</code> headings, <code>**bold**</code>, <code>`code`</code>, <code>```</code> code blocks, <code>- lists</code>.</p></div><button class="btn lime" onclick="newNote()">+ New note</button></div>
  <div class="notesgrid">
   <div class="card panel nlistp"><div class="search"><input id="nsearch" placeholder="grep notes…" oninput="renderNoteList()" aria-label="Search notes"></div><div id="nlist"></div></div>
   <div class="card panel" id="neditor"></div>
@@ -323,6 +81,11 @@ button:disabled{opacity:.6;cursor:wait}
   <div>
    <div class="card panel"><div class="pt"><h3>Display</h3></div>
     <div class="set"><div><b>RGB effects</b><div class="muted" style="font-size:12px">Animated neon borders, gradient headings and scanlines.</div></div><button class="switch" id="rgbSw" role="switch" aria-checked="true" aria-label="RGB effects" onclick="toggleRgb()"></button></div>
+   </div>
+   <div class="card panel"><div class="pt"><h3>GitHub vault</h3><span id="vaultBadge"></span></div>
+    <p class="muted" style="margin-top:0">Save your <b>Notes</b> and <b>SOC cases</b> as Markdown files in a private GitHub repo (opens in Obsidian too).</p>
+    <div class="vstat" id="vaultStatus">Not connected</div>
+    <div class="actions" style="margin:10px 0 0"><button class="btn lime" id="vConnect" onclick="vaultConnect()">Connect GitHub</button><button class="btn" id="vPull" onclick="vaultPull(true)" hidden>↓ Pull from GitHub</button><button class="btn" id="vPush" onclick="vaultSync(true)" hidden>↑ Push now</button><button class="btn" id="vOff" onclick="vaultDisable()" hidden>Turn off</button></div>
    </div>
    <div class="card panel"><div class="pt"><h3>Backup / restore</h3></div>
     <div class="actions" style="margin:0"><button class="btn backupBtn" onclick="backup()">Export JSON</button><label class="btn">Import JSON<input type="file" accept=".json,application/json" hidden onchange="restore(this)"></label></div>
@@ -363,305 +126,233 @@ button:disabled{opacity:.6;cursor:wait}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="../assets/gh.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <script>
-/* ===== PASTE YOUR FIREBASE CONFIG HERE (Firebase console → Project settings → Your apps → Web app) ===== */
-const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyD0uDbhkIlct7BUUBQTcuG_F75ZbeV6Y9A",
-  authDomain: "soc-l1cc.firebaseapp.com",
-  projectId: "soc-l1cc",
-  storageBucket: "soc-l1cc.firebasestorage.app",
-  messagingSenderId: "94446378090",
-  appId: "1:94446378090:web:e3fe1bd60fdccbe8f93e13"
+/* ===== CENTER CONFIG — everything specific to this center lives here ===== */
+const TRACK={
+ "id": "SOC_L1",
+ "key": "SOC_L1_OFFLINE_V1",
+ "field": "state",
+ "vault": "",
+ "title": "SOC Level 1 Command Center",
+ "short": "SOC L1",
+ "host": "soc-l1",
+ "user": "analyst",
+ "group": "blueteam",
+ "os": "BlueTeam Linux",
+ "pathUrl": "https://tryhackme.com/path/outline/soclevel1",
+ "practiceUrl": "https://app.hackthebox.com/sherlocks",
+ "caseId": "CASE",
+ "caseDefault": "New SOC Investigation",
+ "labels": {
+  "case": "SOC case",
+  "cases": "SOC cases",
+  "practice": "HTB practical",
+  "practiceShort": "HTB",
+  "practiceBtn": "Open HTB",
+  "plan": "Plan Sherlock"
+ },
+ "curriculum": [
+  {
+   "name": "Blue Team Introduction",
+   "rooms": [
+    "Junior Security Analyst Intro",
+    "SOC Role in Blue Team",
+    "Humans as Attack Vectors",
+    "Systems as Attack Vectors",
+    "Topic Rewind Recap"
+   ],
+   "platform": "thm"
+  },
+  {
+   "name": "SOC Team Internals",
+   "rooms": [
+    "SOC L1 Alert Triage",
+    "SOC L1 Alert Reporting",
+    "SOC Workbooks and Lookups",
+    "SOC Metrics and Objectives",
+    "Topic Rewind Recap"
+   ],
+   "platform": "thm"
+  },
+  {
+   "name": "Core SOC Solutions",
+   "rooms": [
+    "Introduction to EDR",
+    "Introduction to SIEM",
+    "Splunk: The Basics",
+    "Elastic Stack: The Basics",
+    "Introduction to SOAR",
+    "Topic Rewind Recap"
+   ],
+   "platform": "thm"
+  },
+  {
+   "name": "Cyber Defence Frameworks",
+   "rooms": [
+    "Pyramid Of Pain",
+    "Cyber Kill Chain",
+    "Unified Kill Chain",
+    "MITRE",
+    "Summit",
+    "Eviction",
+    "Topic Rewind Recap"
+   ],
+   "platform": "thm"
+  },
+  {
+   "name": "Phishing Analysis",
+   "rooms": [
+    "Phishing Analysis Fundamentals",
+    "Phishing Emails in Action",
+    "Phishing Analysis Tools",
+    "Phishing Prevention",
+    "The Greenholt Phish",
+    "Snapped Phish-ing Line",
+    "Topic Rewind Recap"
+   ],
+   "platform": "thm"
+  },
+  {
+   "name": "Network Traffic Analysis",
+   "rooms": [
+    "Network Traffic Basics",
+    "Wireshark: The Basics",
+    "Wireshark: Packet Operations",
+    "Wireshark: Traffic Analysis",
+    "NetworkMiner",
+    "Topic Rewind Recap"
+   ],
+   "platform": "thm"
+  },
+  {
+   "name": "Network Security Monitoring",
+   "rooms": [
+    "Network Security Essentials",
+    "Network Discovery Detection",
+    "Data Exfiltration Detection",
+    "Man-in-the-Middle Detection",
+    "IDS Fundamentals",
+    "Snort",
+    "Topic Rewind Recap"
+   ],
+   "platform": "thm"
+  },
+  {
+   "name": "Web Security Monitoring",
+   "rooms": [
+    "Web Security Essentials",
+    "Detecting Web Attacks",
+    "Detecting Web Shells",
+    "Detecting Web DDoS",
+    "Topic Rewind Recap"
+   ],
+   "platform": "thm"
+  },
+  {
+   "name": "Windows Security Monitoring",
+   "rooms": [
+    "Windows Logging for SOC",
+    "Windows Threat Detection 1",
+    "Windows Threat Detection 2",
+    "Windows Threat Detection 3",
+    "Topic Rewind Recap"
+   ],
+   "platform": "thm"
+  },
+  {
+   "name": "Linux Security Monitoring",
+   "rooms": [
+    "Linux Logging for SOC",
+    "Linux Threat Detection 1",
+    "Linux Threat Detection 2",
+    "Linux Threat Detection 3",
+    "Topic Rewind Recap"
+   ],
+   "platform": "thm"
+  },
+  {
+   "name": "Malware Concepts for SOC",
+   "rooms": [
+    "Malware Classification",
+    "Intro to Malware Analysis",
+    "Living Off the Land Attacks",
+    "Shadow Trace",
+    "Topic Rewind Recap"
+   ],
+   "platform": "thm"
+  },
+  {
+   "name": "Threat Analysis Tools",
+   "rooms": [
+    "Intro to Cyber Threat Intel",
+    "File and Hash Threat Intel",
+    "IP and Domain Threat Intel",
+    "Invite Only",
+    "Topic Rewind Recap"
+   ],
+   "platform": "thm"
+  },
+  {
+   "name": "SIEM Triage for SOC",
+   "rooms": [
+    "Log Analysis with SIEM",
+    "Alert Triage With Splunk",
+    "Alert Triage With Elastic",
+    "ItsyBitsy",
+    "Benign",
+    "Topic Rewind Recap"
+   ],
+   "platform": "thm"
+  },
+  {
+   "name": "SOC Level 1 Capstone Challenges",
+   "rooms": [
+    "Tempest",
+    "Boogeyman 1",
+    "Boogeyman 2",
+    "Boogeyman 3",
+    "Topic Rewind Recap"
+   ],
+   "platform": "thm"
+  }
+ ],
+ "slugs": {
+  "Junior Security Analyst Intro": "jrsecanalystintrouxo",
+  "SOC Role in Blue Team": "socroleinblueteam",
+  "Humans as Attack Vectors": "humansattackvectors",
+  "Systems as Attack Vectors": "systemsattackvectors",
+  "SOC L1 Alert Triage": "socl1alerttriage",
+  "SOC L1 Alert Reporting": "socl1alertreporting",
+  "Introduction to SIEM": "introtosiem",
+  "Splunk: The Basics": "splunk101",
+  "Pyramid Of Pain": "pyramidofpainax",
+  "Cyber Kill Chain": "cyberkillchainzmt",
+  "Unified Kill Chain": "unifiedkillchain",
+  "MITRE": "mitre",
+  "Summit": "summit",
+  "Eviction": "eviction",
+  "Phishing Analysis Fundamentals": "phishingemails1tryoe",
+  "Phishing Emails in Action": "phishingemails2rytmuv",
+  "Phishing Analysis Tools": "phishingemails3tryoe",
+  "Phishing Prevention": "phishingemails4gkxh",
+  "The Greenholt Phish": "phishingemails5fgjlzxc",
+  "Snapped Phish-ing Line": "snappedphishingline",
+  "Wireshark: The Basics": "wiresharkthebasics",
+  "Wireshark: Packet Operations": "wiresharkpacketoperations",
+  "Wireshark: Traffic Analysis": "wiresharktrafficanalysis",
+  "NetworkMiner": "networkminer",
+  "Snort": "snort",
+  "Intro to Malware Analysis": "intromalwareanalysis",
+  "Intro to Cyber Threat Intel": "cyberthreatintel",
+  "ItsyBitsy": "itsybitsy",
+  "Benign": "benign",
+  "Tempest": "tempestincident",
+  "Boogeyman 1": "boogeyman1",
+  "Boogeyman 2": "boogeyman2",
+  "Boogeyman 3": "boogeyman3"
+ }
 };
-/* ================================================================================================ */
-const CURR=[["Blue Team Introduction",["Junior Security Analyst Intro","SOC Role in Blue Team","Humans as Attack Vectors","Systems as Attack Vectors","Topic Rewind Recap"]],["SOC Team Internals",["SOC L1 Alert Triage","SOC L1 Alert Reporting","SOC Workbooks and Lookups","SOC Metrics and Objectives","Topic Rewind Recap"]],["Core SOC Solutions",["Introduction to EDR","Introduction to SIEM","Splunk: The Basics","Elastic Stack: The Basics","Introduction to SOAR","Topic Rewind Recap"]],["Cyber Defence Frameworks",["Pyramid Of Pain","Cyber Kill Chain","Unified Kill Chain","MITRE","Summit","Eviction","Topic Rewind Recap"]],["Phishing Analysis",["Phishing Analysis Fundamentals","Phishing Emails in Action","Phishing Analysis Tools","Phishing Prevention","The Greenholt Phish","Snapped Phish-ing Line","Topic Rewind Recap"]],["Network Traffic Analysis",["Network Traffic Basics","Wireshark: The Basics","Wireshark: Packet Operations","Wireshark: Traffic Analysis","NetworkMiner","Topic Rewind Recap"]],["Network Security Monitoring",["Network Security Essentials","Network Discovery Detection","Data Exfiltration Detection","Man-in-the-Middle Detection","IDS Fundamentals","Snort","Topic Rewind Recap"]],["Web Security Monitoring",["Web Security Essentials","Detecting Web Attacks","Detecting Web Shells","Detecting Web DDoS","Topic Rewind Recap"]],["Windows Security Monitoring",["Windows Logging for SOC","Windows Threat Detection 1","Windows Threat Detection 2","Windows Threat Detection 3","Topic Rewind Recap"]],["Linux Security Monitoring",["Linux Logging for SOC","Linux Threat Detection 1","Linux Threat Detection 2","Linux Threat Detection 3","Topic Rewind Recap"]],["Malware Concepts for SOC",["Malware Classification","Intro to Malware Analysis","Living Off the Land Attacks","Shadow Trace","Topic Rewind Recap"]],["Threat Analysis Tools",["Intro to Cyber Threat Intel","File and Hash Threat Intel","IP and Domain Threat Intel","Invite Only","Topic Rewind Recap"]],["SIEM Triage for SOC",["Log Analysis with SIEM","Alert Triage With Splunk","Alert Triage With Elastic","ItsyBitsy","Benign","Topic Rewind Recap"]],["SOC Level 1 Capstone Challenges",["Tempest","Boogeyman 1","Boogeyman 2","Boogeyman 3","Topic Rewind Recap"]]];
-const KEY='SOC_L1_OFFLINE_V1';
-const THM_PATH='https://tryhackme.com/path/outline/soclevel1';
-const HTB_DEFAULT='https://app.hackthebox.com/sherlocks';
-const SLUG={"Junior Security Analyst Intro":"jrsecanalystintrouxo","SOC Role in Blue Team":"socroleinblueteam","Humans as Attack Vectors":"humansattackvectors","Systems as Attack Vectors":"systemsattackvectors","SOC L1 Alert Triage":"socl1alerttriage","SOC L1 Alert Reporting":"socl1alertreporting","Introduction to SIEM":"introtosiem","Splunk: The Basics":"splunk101","Pyramid Of Pain":"pyramidofpainax","Cyber Kill Chain":"cyberkillchainzmt","Unified Kill Chain":"unifiedkillchain","MITRE":"mitre","Summit":"summit","Eviction":"eviction","Phishing Analysis Fundamentals":"phishingemails1tryoe","Phishing Emails in Action":"phishingemails2rytmuv","Phishing Analysis Tools":"phishingemails3tryoe","Phishing Prevention":"phishingemails4gkxh","The Greenholt Phish":"phishingemails5fgjlzxc","Snapped Phish-ing Line":"snappedphishingline","Wireshark: The Basics":"wiresharkthebasics","Wireshark: Packet Operations":"wiresharkpacketoperations","Wireshark: Traffic Analysis":"wiresharktrafficanalysis","NetworkMiner":"networkminer","Snort":"snort","Intro to Malware Analysis":"intromalwareanalysis","Intro to Cyber Threat Intel":"cyberthreatintel","ItsyBitsy":"itsybitsy","Benign":"benign","Tempest":"tempestincident","Boogeyman 1":"boogeyman1","Boogeyman 2":"boogeyman2","Boogeyman 3":"boogeyman3"};
-function roomUrl(k){if(S.links[k])return S.links[k];const [i,j]=k.split('-').map(Number),r=CURR[i][1][j];if(SLUG[r])return 'https://tryhackme.com/room/'+SLUG[r];return 'https://duckduckgo.com/?q='+encodeURIComponent('\\ site:tryhackme.com/room '+(r==='Topic Rewind Recap'?CURR[i][0]+' topic rewind':r))}
-function htbUrl(i){return S.htb[i]||HTB_DEFAULT}
-function openUrl(u){const a=document.createElement('a');a.href=u;a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove()}
-function safeUrl(u){u=String(u||'').trim();if(!u)return '';if(!/^https?:\/\//i.test(u))u='https://'+u;try{return new URL(u).href}catch(e){return null}}
-function editLink(kind,id,label){const m=document.getElementById('modal');const cur=kind==='room'?(S.links[id]||''):(S.htb[id]||'');
- document.getElementById('mtitle').textContent='Link for '+label;
- const b=document.getElementById('mbody');b.innerHTML='<p style="margin:0 0 8px">Paste the exact page URL. Leave empty to use the default link.</p><input id="linkIn" class="linkin" placeholder="https://…">';
- const inp=document.getElementById('linkIn');inp.value=cur;
- const a=document.getElementById('mact');a.innerHTML='';
- [['Cancel',null],['Save link','lime']].forEach(([t,c])=>{const e=document.createElement('button');e.className='btn'+(c?' '+c:'');e.textContent=t;e.onclick=()=>{if(c){const v=safeUrl(inp.value);if(v===null){msg('That doesn’t look like a valid URL');return}const store=kind==='room'?S.links:S.htb;if(v)store[id]=v;else delete store[id];save();msg(v?'Link saved':'Default link restored')}m.classList.remove('show')};a.appendChild(e)});
- m.classList.add('show');inp.focus()}
-const blank=()=>({rooms:{},ass:{},cases:[],links:{},htb:{},notes:[]});
-function norm(x){x=x&&typeof x==='object'?x:{};return{rooms:x.rooms&&typeof x.rooms==='object'?x.rooms:{},ass:x.ass&&typeof x.ass==='object'?x.ass:{},cases:Array.isArray(x.cases)?x.cases:[],links:x.links&&typeof x.links==='object'?x.links:{},htb:x.htb&&typeof x.htb==='object'?x.htb:{},notes:Array.isArray(x.notes)?x.notes:[]}}
-let UKEY=KEY;let S=blank();
-function loadLocal(){try{return norm(JSON.parse(localStorage.getItem(UKEY)))}catch(e){return blank()}}
-function saveLocal(){try{localStorage.setItem(UKEY,JSON.stringify(S))}catch(e){}}
-
-/* Cloud sync (per-user, private) when running as a published artifact */
-let DB=null,DOC=null,pushT=null;
-function setSync(t){document.getElementById('syncfoot').textContent=t;document.getElementById('syncline').textContent=t==='Synced to your account'?'Progress is synced to your account (Firebase) and cached in this browser.':'Progress is saved in this browser.'}
-async function initCloud(){}
-/* ================= FIREBASE LOGIN + CLOUD SAVE ================= */
-function fbReady(){return FIREBASE_CONFIG&&FIREBASE_CONFIG.apiKey&&!/PASTE/.test(FIREBASE_CONFIG.apiKey)&&window.firebase}
-let AUTH=null,FS=null,CUR_USER=null;
-const ERR={'auth/invalid-email':'That email address isn’t valid.','auth/missing-password':'Enter your password.','auth/weak-password':'Password must be at least 6 characters.','auth/email-already-in-use':'An account with this email already exists. Sign in instead.','auth/invalid-credential':'Wrong email or password.','auth/wrong-password':'Wrong email or password.','auth/user-not-found':'No account with this email. Create one first.','auth/too-many-requests':'Too many attempts. Wait a few minutes and try again.','auth/popup-closed-by-user':'Google sign-in was closed before finishing.','auth/unauthorized-domain':'This website address isn’t allowed yet. Add it in Firebase → Authentication → Settings → Authorized domains.','auth/operation-not-allowed':'This sign-in method is turned off in Firebase → Authentication → Sign-in method.','auth/network-request-failed':'No internet connection.','auth/popup-blocked':'Your browser blocked the Google popup. Allow popups for this site (icon at the right of the address bar) and try again.','auth/cancelled-popup-request':'Sign-in was already in progress. Try again.','auth/api-key-not-valid.-please-pass-a-valid-api-key.':'The Firebase apiKey in index.html is wrong. Copy it again from Firebase → Project settings.','auth/invalid-api-key':'The Firebase apiKey in index.html is wrong. Copy it again from Firebase → Project settings.'};
-function gerr(e){const el=document.getElementById('gerr');el.textContent=ERR[e&&e.code]||('Sign-in failed: '+((e&&e.message)||e));el.className='gmsg bad'}
-function ginfo(t){const el=document.getElementById('gerr');el.textContent=t;el.className='gmsg ok'}
-function gbusy(on){document.querySelectorAll('#gate button').forEach(b=>b.disabled=on)}
-function initFirebase(){
- const gate=document.getElementById('gate');
- if(!fbReady()){showGate('setup');return}
- firebase.initializeApp(FIREBASE_CONFIG);AUTH=firebase.auth();FS=firebase.firestore();
- AUTH.onAuthStateChanged(async u=>{
-  CUR_USER=u;
-  if(!u){DOC=null;IS_ADMIN=false;S=blank();renderAll();showGate('form');document.getElementById('whoami').textContent='';return}
-  if(!(await checkAccess(u)))return;
-  gate.classList.remove('show');document.getElementById('whoami').textContent=u.email||u.displayName||'Signed in';
-  UKEY=KEY+'_'+u.uid;S=loadLocal();renderAll();
-  DOC=FS.collection('users').doc(u.uid);
-  try{const snap=await DOC.get();
-   if(snap.exists){const d=snap.data();if(d&&d.state){S=norm(JSON.parse(d.state));saveLocal();renderAll()}}
-   else{await DOC.set({state:JSON.stringify(S),updated:Date.now(),email:u.email||''})}
-   setSync('Synced to your account');
-  }catch(e){setSync('Offline — saved in this browser');msg('Cloud sync failed — check Firestore rules')}
- });
-}
-/* ---- invite-only access ---- */
-let IS_ADMIN=false;
-function showGate(which){const g=document.getElementById('gate');g.classList.add('show');document.getElementById('gform').hidden=which!=='form';document.getElementById('gpending').hidden=which!=='pending';document.getElementById('gsetup').hidden=which!=='setup';if(which==='form'){document.getElementById('gerr').textContent=''}}
-async function checkAccess(u){
- const email=(u.email||'').toLowerCase();
- IS_ADMIN=false;
- try{await FS.collection('requests').limit(1).get();IS_ADMIN=true}catch(e){}
- if(IS_ADMIN){renderAccess();return true}
- try{const a=await FS.collection('allowlist').doc(email).get();if(a.exists)return true}catch(e){}
- try{await FS.collection('requests').doc(email).set({email,name:u.displayName||'',photo:u.photoURL||'',uid:u.uid,requested:Date.now()})}catch(e){}
- document.getElementById('gpemail').textContent=email;document.getElementById('gperr').textContent='';showGate('pending');
- return false;
-}
-async function recheckAccess(){const u=AUTH&&AUTH.currentUser;if(!u)return;const el=document.getElementById('gperr');el.className='gmsg';el.textContent='Checking…';
- try{const a=await FS.collection('allowlist').doc((u.email||'').toLowerCase()).get();if(a.exists){location.reload();return}}catch(e){}
- el.className='gmsg bad';el.textContent='Not approved yet. Try again later.'}
-async function renderAccess(){
- const box=document.getElementById('accessPanel');if(!box)return;box.hidden=!IS_ADMIN;if(!IS_ADMIN)return;
- const [rq,al]=await Promise.all([FS.collection('requests').get(),FS.collection('allowlist').get()]).catch(()=>[null,null]);
- if(!rq){document.getElementById('acReq').innerHTML='<div class="empty">Could not load — check Firestore rules.</div>';return}
- const reqs=rq.docs.map(d=>d.data()).sort((a,b)=>(b.requested||0)-(a.requested||0));
- const allow=al.docs.map(d=>({email:d.id,...d.data()})).sort((a,b)=>a.email.localeCompare(b.email));
- document.getElementById('acBadge').textContent=reqs.length?reqs.length+' pending':'';
- document.getElementById('acReq').innerHTML=reqs.length?reqs.map(r=>'<div class="acrow"><div><b>'+esc(r.name||r.email)+'</b><span>'+esc(r.email)+' · '+new Date(r.requested||Date.now()).toLocaleString()+'</span></div><div class="actions" style="margin:0"><button class="btn sm lime" onclick="approve(\''+esc(r.email)+'\')">Approve</button><button class="btn sm" onclick="denyReq(\''+esc(r.email)+'\')">Deny</button></div></div>').join(''):'<div class="empty">No pending requests.</div>';
- document.getElementById('acAllow').innerHTML=allow.length?allow.map(a=>'<div class="acrow"><div><b>'+esc(a.email)+'</b><span>approved '+(a.added?new Date(a.added).toLocaleDateString():'')+'</span></div><button class="btn sm" onclick="revoke(\''+esc(a.email)+'\')">Remove</button></div>').join(''):'<div class="empty">No approved users yet.</div>';
-}
-async function approve(email){email=email.toLowerCase().trim();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){msg('Enter a valid email');return}
- try{await FS.collection('allowlist').doc(email).set({added:Date.now(),by:(CUR_USER&&CUR_USER.email)||''});await FS.collection('requests').doc(email).delete().catch(()=>{});msg('Approved '+email);renderAccess()}catch(e){msg('Failed: '+(e.code||e.message))}}
-function denyReq(email){ask('Deny '+email+'?','The request is removed. They can request again by signing in.',[{label:'Cancel'},{label:'Deny',cls:'lime',fn:async()=>{try{await FS.collection('requests').doc(email).delete();msg('Request removed');renderAccess()}catch(e){msg('Failed: '+(e.code||e.message))}}}])}
-function revoke(email){ask('Remove '+email+'?','They will lose access the next time they open the site. Their saved progress is kept.',[{label:'Cancel'},{label:'Remove access',cls:'lime',fn:async()=>{try{await FS.collection('allowlist').doc(email).delete();msg('Access removed');renderAccess()}catch(e){msg('Failed: '+(e.code||e.message))}}}])}
-function addAllowed(){const i=document.getElementById('acNew');approve(i.value);i.value=''}
-async function gGoogle(){if(!AUTH){return}gbusy(true);const t=setTimeout(()=>gbusy(false),15000);try{const pr=new firebase.auth.GoogleAuthProvider();pr.setCustomParameters({prompt:'select_account'});await AUTH.signInWithPopup(pr)}catch(e){gerr(e)}clearTimeout(t);gbusy(false)}
-async function gEmail(create){const em=document.getElementById('gem').value.trim(),pw=document.getElementById('gpw').value;gbusy(true);
- try{if(create)await AUTH.createUserWithEmailAndPassword(em,pw);else await AUTH.signInWithEmailAndPassword(em,pw)}catch(e){gerr(e)}gbusy(false)}
-async function gReset(){const em=document.getElementById('gem').value.trim();if(!em){gerr({code:'auth/invalid-email'});return}
- try{await AUTH.sendPasswordResetEmail(em);ginfo('Password reset email sent to '+em)}catch(e){gerr(e)}}
-function signOut(){ask('Sign out?','Your progress stays saved in your account.',[{label:'Cancel'},{label:'Sign out',cls:'lime',fn:()=>{clearTimeout(pushT);AUTH&&AUTH.signOut()}}])}
-function pushCloud(){if(!DOC)return;clearTimeout(pushT);pushT=setTimeout(()=>{DOC.set({state:JSON.stringify(S),updated:Date.now(),email:(CUR_USER&&CUR_USER.email)||''}).catch(()=>{})},700)}
-function persist(){saveLocal();pushCloud()}
-function save(){persist();renderAll()}
-
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function all(){let a=[];CURR.forEach((s,si)=>s[1].forEach((r,ri)=>a.push({si,ri,s:s[0],r,key:si+'-'+ri})));return a}
-function st(k){return S.rooms[k]?.status||'Not Started'}
-function setst(k,v){const o=S.rooms[k]||{};S.rooms[k]={...o,status:v,learned:v==='Done'?(o.learned||today()):(o.learned||'')}}
-function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function cur(){const a=all();return a.find(x=>st(x.key)!=='Done')||a[a.length-1]}
-function stats(i){let r=CURR[i][1].map((_,j)=>st(i+'-'+j));return{n:r.length,d:r.filter(x=>x==='Done').length}}
-function passed(i){return S.ass[i]?.status==='Passed'}
-function go(id){if(id==='settings'&&IS_ADMIN)setTimeout(renderAccess,0);document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));document.getElementById(id).classList.add('on');document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('on',x.dataset.v===id));document.getElementById('crumb').textContent='COMMAND CENTER / '+id.toUpperCase();renderAll();window.scrollTo(0,0)}
-document.querySelectorAll('.nav button').forEach(x=>x.onclick=()=>go(x.dataset.v));
-let toastT;function msg(x){let t=document.getElementById('toast');t.textContent=x;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2200)}
-function ask(title,body,buttons){const m=document.getElementById('modal');document.getElementById('mtitle').textContent=title;document.getElementById('mbody').textContent=body;const a=document.getElementById('mact');a.innerHTML='';buttons.forEach(b=>{const e=document.createElement('button');e.className='btn'+(b.cls?' '+b.cls:'');e.textContent=b.label;e.onclick=()=>{m.classList.remove('show');b.fn&&b.fn()};a.appendChild(e)});m.classList.add('show');a.lastChild.focus()}
-document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')e.currentTarget.classList.remove('show')});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementById('modal').classList.remove('show')});
-
-function thm(){openUrl(THM_PATH)}
-function start(){let c=cur();openUrl(roomUrl(c.key));if(st(c.key)==='Not Started'){setst(c.key,'In Progress');save()}msg('Opening: '+c.r)}
-function done(){let c=cur();setst(c.key,'Done');save();msg('Completed: '+c.r)}
-function renderDash(){let a=all(),d=a.filter(x=>st(x.key)==='Done').length,c=cur();
- pct.textContent=Math.round(d/a.length*100)+'%';rooms.textContent=d+' / '+a.length+' rooms';secno.textContent=(c.si+1);secname.textContent=c.s;
- unlocked.textContent=CURR.filter((_,i)=>passed(i)).length;casecount.textContent=S.cases.length;
- msec.textContent='SECTION '+(c.si+1)+' • '+c.s.toUpperCase();mroom.textContent=c.r;mstatus.textContent=st(c.key).toUpperCase();
- sprogress.innerHTML=CURR.map((s,i)=>{let q=stats(i),p=Math.round(q.d/q.n*100);return '<div class="srow"><div class="rtop"><b>'+(i+1)+'. '+esc(s[0])+'</b><span>'+q.d+'/'+q.n+' • '+p+'%</span></div><div class="progress"><i style="width:'+p+'%"></i></div></div>'}).join('')}
-function renderTHM(){let q=(document.getElementById('search').value||'').toLowerCase(),o='';
- CURR.forEach((s,i)=>{let rs=s[1].map((r,j)=>({r,j})).filter(x=>(s[0]+' '+x.r).toLowerCase().includes(q));if(!rs.length)return;
-  o+='<div class="sechdrow"><h3 class="sechd">SECTION '+(i+1)+' • '+esc(s[0])+'</h3><a class="btn sm" href="'+THM_PATH+'" target="_blank" rel="noopener">Open path ↗</a></div><div class="tw"><table class="table"><thead><tr><th>#</th><th>Room</th><th>Status</th><th>Action</th></tr></thead><tbody>';
-  rs.forEach(x=>{let z=st(i+'-'+x.j),cl=z==='Done'?'done':z==='In Progress'?'prog':'not';o+='<tr><td>'+(x.j+1)+'</td><td><b>'+esc(x.r)+'</b></td><td><span class="tag '+cl+'">'+z+'</span></td><td class="acts"><a class="btn sm lime" href="'+esc(roomUrl(i+'-'+x.j))+'" target="_blank" rel="noopener" onclick="opened(\''+i+'-'+x.j+'\')">'+(z==='Done'?'Open ↗':'Start ↗')+'</a><button class="btn sm" onclick="cycle(\''+i+'-'+x.j+'\')">'+(z==='Not Started'?'Mark started':z==='In Progress'?'Mark done':'Reopen')+'</button><button class="btn sm" title="Edit link" aria-label="Edit room link" onclick="editLink(\'room\',\''+i+'-'+x.j+'\',CURR['+i+'][1]['+x.j+'])">✎</button><button class="btn sm'+(noteForRoom(i+'-'+x.j)?' hasnote':'')+'" title="Room notes" aria-label="Room notes" onclick="roomNote(\''+i+'-'+x.j+'\')">📝</button></td></tr>'});
-  o+='</tbody></table></div>'});
- thmlist.innerHTML=o||'<div class="empty">No rooms match that search. Try a section name like "Phishing".</div>'}
-function opened(k){if(st(k)==='Not Started'){setTimeout(()=>{setst(k,'In Progress');save()},400)}}
-function cycle(k){let z=st(k);setst(k,z==='Not Started'?'In Progress':z==='In Progress'?'Done':'Not Started');save();msg('Room updated')}
-function assTag(a){return a==='Passed'?'done':a==='Failed'?'lock':'not'}
-function renderSections(){sectable.innerHTML=CURR.map((s,i)=>{let q=stats(i),p=Math.round(q.d/q.n*100),a=S.ass[i]?.status||'Pending';return '<tr><td><b>Section '+(i+1)+'</b><br><span class="muted">'+esc(s[0])+'</span></td><td>'+q.d+'/'+q.n+'</td><td style="min-width:110px"><div class="progress"><i style="width:'+p+'%"></i></div>'+p+'%</td><td><span class="tag '+assTag(a)+'">'+a+'</span></td><td><span class="tag '+(passed(i)?'ready':'lock')+'">'+(passed(i)?'Unlocked':'Locked')+'</span></td></tr>'}).join('')}
-function renderAssess(){asslist.innerHTML=CURR.map((s,i)=>{let q=stats(i),a=S.ass[i]?.status||'Pending',ready=q.d===q.n,dt=S.ass[i]?.date?' <span class="muted" style="font-size:11px">('+esc(S.ass[i].date)+')</span>':'';
- return '<div class="card panel"><div class="pt"><h3>Section '+(i+1)+' • '+esc(s[0])+'</h3><span>'+q.d+'/'+q.n+' rooms</span></div><div class="assrow"><span class="muted">'+(ready?'Assessment available.':'Complete all THM rooms first.')+'</span>'+(ready?'<button class="btn sm" onclick="assess('+i+')">Record pass / fail</button>':'')+'<span class="tag '+assTag(a)+'">'+a+'</span>'+dt+'</div></div>'}).join('')}
-function assess(i){ask('Section '+(i+1)+' assessment','Record your result for '+CURR[i][0]+'.',[
- {label:'Cancel'},
- {label:'Not passed',fn:()=>{S.ass[i]={status:'Failed',date:today()};save();msg('Not passed — revise and retry')}},
- {label:'Passed',cls:'lime',fn:()=>{S.ass[i]={status:'Passed',date:today()};save();msg('Passed — HTB unlocked')}}])}
-function renderHTB(){htblist.innerHTML=CURR.map((s,i)=>{let q=stats(i),p=passed(i);return '<tr><td><b>'+(i+1)+'. '+esc(s[0])+'</b></td><td>'+q.d+'/'+q.n+'</td><td><span class="tag '+(p?'done':'lock')+'">'+(p?'Passed':'Not Passed')+'</span></td><td><span class="tag '+(p?'ready':'lock')+'">'+(p?'Unlocked':'Locked')+'</span></td><td class="acts">'+(p?'<a class="btn sm lime" href="'+esc(htbUrl(i))+'" target="_blank" rel="noopener">Open HTB ↗</a><button class="btn sm" onclick="newCase(\'HTB / Section '+(i+1)+'\')">Plan Sherlock</button>':'<span class="muted" style="margin-right:6px">Pass assessment first</span>')+'<button class="btn sm" title="Edit HTB link" aria-label="Edit HTB link" onclick="editLink(\'htb\','+i+',\'Section '+(i+1)+' (HTB)\')">✎</button></td></tr>'}).join('')}
-function launch(){let c=cur();if(passed(c.si)){go('htb');msg('HTB unlocked for current section')}else{go('assess');msg('Assessment required before HTB')}}
-function newCase(title){let n=S.cases.reduce((m,c)=>Math.max(m,parseInt(String(c.id).split('-')[1])||0),0)+1;let id='CASE-'+String(n).padStart(3,'0');S.cases.push({id,title:title||'New SOC Investigation',created:today(),notes:'',verdict:'Open'});save();go('cases');msg(id+' created')}
-function renderCases(){caselist.innerHTML=S.cases.length?S.cases.map((c,i)=>'<div class="card case"><h3>'+esc(c.id)+'</h3><input value="'+esc(c.title)+'" onchange="setTitle('+i+',this.value)" aria-label="Case title"><p class="muted" style="font-size:12px;margin:8px 0 0">Created '+esc(c.created)+' • <span class="tag '+(c.verdict==='Open'?'prog':'done')+'">'+esc(c.verdict)+'</span></p><textarea oninput="note('+i+',this.value)" placeholder="Evidence, timeline, IOC/TTP, MITRE, verdict, response…">'+esc(c.notes)+'</textarea><div class="row"><button class="btn sm" onclick="closeCase('+i+')">'+(c.verdict==='Open'?'Close case':'Reopen case')+'</button><button class="btn sm" onclick="delCase('+i+')">Delete</button></div></div>').join(''):'<div class="empty" style="grid-column:1/-1">No cases yet. Select “+ New Case” to log your first investigation.</div>'}
-function setTitle(i,v){S.cases[i].title=v;persist()}
-function note(i,v){S.cases[i].notes=v;persist()}
-function closeCase(i){S.cases[i].verdict=S.cases[i].verdict==='Open'?'Closed':'Open';save()}
-function delCase(i){ask('Delete '+S.cases[i].id+'?','Its notes will be removed permanently.',[{label:'Cancel'},{label:'Delete case',cls:'lime',fn:()=>{S.cases.splice(i,1);save();msg('Case deleted')}}])}
-function renderRev(){let a=all().filter(x=>st(x.key)==='Done'),t=today();
- revlist.innerHTML=a.length?a.map(x=>{let L=S.rooms[x.key].learned||t,d=new Date(L+'T00:00:00'),f=n=>{let z=new Date(d);z.setDate(z.getDate()+n);let s=z.getFullYear()+'-'+String(z.getMonth()+1).padStart(2,'0')+'-'+String(z.getDate()).padStart(2,'0');return s===t?'<span class="tag not">'+s+' • today</span>':s<t?'<span class="muted">'+s+'</span>':s};
- return '<tr><td>'+esc(x.r)+'</td><td>'+esc(x.s)+'</td><td>'+esc(L)+'</td><td>'+f(1)+'</td><td>'+f(3)+'</td><td>'+f(7)+'</td></tr>'}).join(''):'<tr><td colspan="6"><div class="empty">Mark a room done to start revision tracking.</div></td></tr>'}
-
-/* Backup via the downloads capability */
-let DL=null;
-(async()=>{try{if(window.claude&&window.claude.use){DL=await window.claude.use('downloads')}}catch(e){DL=null}})();
-async function backup(){const data=JSON.stringify(S,null,2);
- if(DL){try{await DL.save({filename:'SOC_L1_Backup.json',data});msg('Backup exported')}catch(e){if(e&&e.code==='declined')msg('Backup cancelled');else msg('Backup is unavailable here')}return}
- try{const b=new Blob([data],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='SOC_L1_Backup.json';a.click();msg('Backup exported')}catch(e){msg('Backup is unavailable here')}}
-function restore(inp){let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{S=norm(JSON.parse(r.result));save();msg('Backup restored')}catch(e){msg('That file isn’t a valid backup JSON')}inp.value=''};r.readAsText(f)}
-function resetAll(){ask('Reset all training data?','Rooms, assessments and cases will be cleared. Export a backup first if you might need them.',[{label:'Cancel'},{label:'Reset',cls:'lime',fn:()=>{S=blank();save();msg('Progress reset')}}])}
-/* ================= NOTES ================= */
-let CUR_NOTE=null,NOTE_PREVIEW=false;
-function nid(){return 'n'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
-function roomName(k){if(!k)return '';const [i,j]=k.split('-').map(Number);return CURR[i]&&CURR[i][1][j]?CURR[i][1][j]+' · S'+(i+1):''}
-function noteForRoom(k){return S.notes.find(n=>n.room===k)}
-function newNote(room){const n={id:nid(),title:room?CURR[+room.split('-')[0]][1][+room.split('-')[1]]:'Untitled note',room:room||'',tags:'',body:'',updated:Date.now()};S.notes.unshift(n);CUR_NOTE=n.id;NOTE_PREVIEW=false;save();go('notes');setTimeout(()=>{const t=document.getElementById('nbody');t&&t.focus()},50)}
-function roomNote(k){const n=noteForRoom(k);if(n){CUR_NOTE=n.id;NOTE_PREVIEW=true;go('notes')}else newNote(k)}
-function openNote(id){CUR_NOTE=id;NOTE_PREVIEW=true;renderNotes()}
-function curNote(){return S.notes.find(n=>n.id===CUR_NOTE)}
-function editNote(f,v){const n=curNote();if(!n)return;n[f]=v;n.updated=Date.now();persist();renderNoteList()}
-function delNote(){const n=curNote();if(!n)return;ask('Delete "'+(n.title||'Untitled')+'"?','This note will be removed permanently.',[{label:'Cancel'},{label:'Delete note',cls:'lime',fn:()=>{S.notes=S.notes.filter(x=>x.id!==n.id);CUR_NOTE=null;save();msg('Note deleted')}}])}
-function togglePreview(){NOTE_PREVIEW=!NOTE_PREVIEW;renderNoteEditor()}
-function md(src){try{if(window.marked&&window.DOMPurify)return DOMPurify.sanitize(marked.parse(src||''))}catch(e){}return '<pre>'+esc(src)+'</pre>'}
-function fmtDate(t){const d=new Date(t);return d.toLocaleDateString(undefined,{day:'2-digit',month:'short',year:'numeric'})}
-function renderNoteList(){const q=(document.getElementById('nsearch').value||'').toLowerCase();
- const list=S.notes.slice().sort((a,b)=>b.updated-a.updated).filter(n=>(n.title+' '+n.tags+' '+n.body+' '+roomName(n.room)).toLowerCase().includes(q));
- document.getElementById('nlist').innerHTML=list.length?list.map(n=>'<button class="nitem'+(n.id===CUR_NOTE?' on':'')+'" onclick="openNote(\''+n.id+'\')"><b>'+esc(n.title||'Untitled note')+'</b><span>'+(n.room?'▣ '+esc(roomName(n.room))+' · ':'')+fmtDate(n.updated)+'</span>'+(n.tags?'<span class="ntags">'+n.tags.split(',').map(t=>t.trim()).filter(Boolean).map(t=>'#'+esc(t)).join(' ')+'</span>':'')+'</button>').join(''):'<div class="empty">'+(S.notes.length?'No notes match.':'No notes yet. Click “+ New note”, or 📝 next to any THM room.')+'</div>'}
-function renderNoteEditor(){const n=curNote(),ed=document.getElementById('neditor');
- if(!n){ed.innerHTML='<div class="empty">Select a note, or create a new one.</div>';return}
- ed.innerHTML='<div class="nhead"><input id="ntitle" class="ntitle" aria-label="Note title" placeholder="Note title"><div class="actions" style="margin:0"><button class="btn sm" onclick="togglePreview()">'+(NOTE_PREVIEW?'✎ Edit':'👁 Preview')+'</button><button class="btn sm" onclick="delNote()">Delete</button></div></div>'+
- '<div class="nmeta">'+(n.room?'<span class="tag prog">▣ '+esc(roomName(n.room))+'</span>':'')+'<input id="ntags" class="linkin" placeholder="tags, comma separated (e.g. splunk, phishing)" aria-label="Tags"></div>'+
- (NOTE_PREVIEW?'<div class="mdview">'+(n.body.trim()?md(n.body):'<p class="muted">Empty note. Click ✎ Edit to start writing.</p>')+'</div>':'<textarea id="nbody" class="nbody" placeholder="# Key takeaways&#10;- …&#10;&#10;```&#10;index=main sourcetype=wineventlog EventCode=4625&#10;```"></textarea>');
- const t=document.getElementById('ntitle');t.value=n.title;t.oninput=e=>editNote('title',e.target.value);
- const g=document.getElementById('ntags');g.value=n.tags;g.oninput=e=>editNote('tags',e.target.value);
- const b=document.getElementById('nbody');if(b){b.value=n.body;b.oninput=e=>editNote('body',e.target.value);b.onkeydown=e=>{if(e.key==='Tab'){e.preventDefault();const s=b.selectionStart;b.setRangeText('  ',s,b.selectionEnd,'end');editNote('body',b.value)}}}}
-function renderNotes(){if(!document.getElementById('nlist'))return;if(CUR_NOTE&&!curNote())CUR_NOTE=null;renderNoteList();renderNoteEditor()}
-function renderAll(){if(!document.activeElement||!document.activeElement.closest('#neditor'))renderNotes();renderDash();renderTHM();renderSections();renderAssess();renderHTB();if(!document.activeElement||!document.activeElement.closest('#caselist'))renderCases();renderRev()}
-renderAll();initFirebase();
-
-/* hacker-theme extras */
-const _rd=renderDash;renderDash=function(){_rd();const c=cur(),t=document.getElementById('termline');if(t)t.textContent='[S'+String(c.si+1).padStart(2,'0')+'] '+c.r+'  ::  '+st(c.key).toLowerCase();};
-/* ================= INTERACTIVE TERMINALS ================= */
-function Shell(o){
- const out=document.getElementById(o.out),inp=document.getElementById(o.input),H=[];let hi=0;
- const self={
-  print(html,cls){const d=document.createElement('div');if(cls)d.className=cls;d.innerHTML=html;out.appendChild(d);out.scrollTop=out.scrollHeight},
-  text(t,cls){this.print(esc(t),cls)},
-  clear(){out.innerHTML=''},
-  focus(){inp.focus()}
- };
- inp.closest('.sh').addEventListener('click',e=>{if(!getSelection().toString())inp.focus()});
- inp.addEventListener('keydown',async e=>{
-  if(e.key==='ArrowUp'){if(hi>0){hi--;inp.value=H[hi]}e.preventDefault();return}
-  if(e.key==='ArrowDown'){if(hi<H.length-1){hi++;inp.value=H[hi]}else{hi=H.length;inp.value=''}e.preventDefault();return}
-  if(e.key==='Tab'){e.preventDefault();const v=inp.value.trim();if(!v)return;const m=Object.keys(o.cmds).filter(k=>k.startsWith(v)&&!k.startsWith('_'));if(m.length===1)inp.value=m[0]+' ';else if(m.length>1)self.print(m.join('   '),'dim');return}
-  if(e.key==='l'&&e.ctrlKey){e.preventDefault();self.clear();return}
-  if(e.key!=='Enter')return;
-  const line=inp.value;inp.value='';
-  self.print(o.prompt+' <span class="c">'+esc(line)+'</span>');
-  const t=line.trim();if(!t)return;
-  H.push(t);hi=H.length;
-  const [cmd,...args]=t.split(/\s+/);
-  const fn=o.cmds[cmd]||(cmd.startsWith('./')&&o.cmds[cmd]);
-  try{
-   if(o.cmds._pre){const r=o.cmds._pre(t,cmd,args,self,H);if(r!==undefined){if(r)self.print(r);return}}
-   if(fn){const r=await fn(args,self,H,t);if(r)self.print(r)}
-   else self.print('bash: '+esc(cmd)+': command not found <span class="dim">(try <b>help</b>)</span>','er');
-  }catch(err){self.print(esc(String(err.message||err)),'er')}
- });
- return self;
-}
-const pad=(s,n)=>String(s).padEnd(n,' ');
-const helpTable=rows=>rows.map(r=>'<span class="ok">'+esc(pad(r[0],18))+'</span><span class="dim">'+esc(r[1])+'</span>').join('\n');
-const common={
- clear:(a,s)=>{s.clear()},
- date:()=>esc(new Date().toString()),
- echo:a=>esc(a.join(' ')),
- hostname:()=>'soc-l1',
- uname:a=>a.includes('-a')?'Linux soc-l1 6.8.0-blueteam #1 SMP PREEMPT_DYNAMIC x86_64 GNU/Linux':'Linux',
- history:(a,s,H)=>H.map((c,i)=>'<span class="dim">'+String(i+1).padStart(4,' ')+'</span>  '+esc(c)).join('\n'),
- sudo:()=>'<span class="er">[sudo] this user is not in the sudoers file. This incident will be reported.</span> <span class="dim">🚨 alert forwarded to SOC</span>',
- su:()=>'<span class="er">su: Authentication failure</span>',
- rm:(a)=>a.join(' ').includes('-rf')?'<span class="mg">Nice try. Ticket INC-'+Math.floor(1e4+Math.random()*9e4)+' raised for destructive command attempt.</span>':'rm: permission denied',
- ping:a=>{const h=esc(a[a.length-1]||'8.8.8.8');return 'PING '+h+' 56(84) bytes of data.\n'+[1,2,3].map(i=>'64 bytes from '+h+': icmp_seq='+i+' ttl=117 time='+(12+Math.random()*9).toFixed(1)+' ms').join('\n')+'\n<span class="dim">--- 3 packets transmitted, 3 received, 0% packet loss ---</span>'},
- nmap:a=>{const h=esc(a[a.length-1]||'localhost');return 'Starting Nmap 7.95 ( https://nmap.org )\nNmap scan report for '+h+'\nPORT     STATE    SERVICE\n22/tcp   <span class="ok">open</span>     ssh\n80/tcp   <span class="ok">open</span>     http\n443/tcp  <span class="ok">open</span>     https\n3389/tcp <span class="am">filtered</span> ms-wbt-server\n<span class="dim">(simulated — only scan systems you are authorised to test)</span>'},
- cowsay:a=>{const t=a.join(' ')||'moo, analyst';return esc(' '+'_'.repeat(t.length+2)+'\n< '+t+' >\n '+'-'.repeat(t.length+2)+'\n        \\   ^__^\n         \\  (oo)\\_______\n            (__)\\       )\\/\\\n                ||----w |\n                ||     ||')},
- matrix:(a,s)=>{const ch='01アイウエオカキクケコ';let o='';for(let r=0;r<6;r++){for(let c=0;c<48;c++)o+=ch[Math.floor(Math.random()*ch.length)];o+='\n'}return '<span class="ok">'+esc(o)+'</span>'},
- exit:()=>'logout <span class="dim">(nice try — you can’t escape the SOC)</span>'
-};
-const neo=(user)=>'<span class="ok">   ▄▄▄▄▄▄▄▄   </span>  <b class="cy">'+esc(user)+'@soc-l1</b>\n<span class="ok">  █ &gt;_     █  </span>  <span class="dim">-----------------</span>\n<span class="cy">  █  SOC L1  █  </span>  <span class="ok">OS</span>: BlueTeam Linux x86_64\n<span class="mg">  █▄▄▄▄▄▄▄▄█  </span>  <span class="ok">Shell</span>: soc-sh 1.0\n<span class="ok">     ▀▀▀▀     </span>  <span class="ok">Tools</span>: Splunk · Elastic · Wireshark · Snort\n                <span class="ok">Uptime</span>: '+Math.floor(performance.now()/60000)+' min';
-
-/* ---- login-screen shell ---- */
-const GFILES={'README.txt':'Welcome to the SOC Level 1 Command Center.\nAuthenticate to access your training dashboard.\n\n  ./authenticate --google   sign in with Google\n  login                     sign in with Google\n  register                  request access','login.sh':'#!/bin/bash\n# focuses the email login form\necho "Enter credentials below"'};
-let GSH=null;
-function initLoginShell(){
- GSH=Shell({out:'gout',input:'gcmd',prompt:'<span class="p">guest@soc-l1</span>:<span class="h">~</span>$',cmds:Object.assign({},common,{
-  help:()=>helpTable([['./authenticate','sign in (add --google for Google)'],['login','sign in with Google'],['register','how to get access'],['whoami','current user'],['ls / cat FILE','look around'],['neofetch','system info'],['clear','clear the screen (Ctrl+L)'],['…','plus: pwd id uname date echo history ping nmap cowsay matrix sudo']]),
-  whoami:()=>'guest',
-  id:()=>'uid=1000(guest) gid=1000(guest) groups=1000(guest)',
-  pwd:()=>'/home/guest',
-  cd:a=>'bash: cd: '+esc(a[0]||'~')+': restricted shell — authenticate first',
-  ls:a=>a.some(x=>x.startsWith('-')&&x.includes('a'))?'drwx------  .secrets/\n-rw-r--r--  README.txt\n-rwxr-xr-x  login.sh\n-rwxr-xr-x  authenticate':'<span class="cy">README.txt</span>  <span class="ok">login.sh  authenticate</span>',
-  cat:a=>{const f=(a[0]||'').replace(/^\.\//,'');if(!f)return 'usage: cat FILE';if(f.startsWith('.secrets'))return '<span class="er">cat: '+esc(f)+': Permission denied</span> <span class="dim">😉 nice try, analyst</span>';if(f==='/etc/passwd')return 'root:x:0:0:root:/root:/bin/bash\nguest:x:1000:1000::/home/guest:/bin/soc-sh';if(f==='/etc/shadow')return '<span class="er">cat: /etc/shadow: Permission denied</span>';return GFILES[f]?esc(GFILES[f]):'cat: '+esc(f)+': No such file or directory'},
-  neofetch:()=>neo('guest'),
-  './authenticate':async(a,s)=>{if(a.includes('--google')||a.includes('-g')){s.print('[*] launching Google OAuth…','cy');await gGoogle();return}return 'usage: ./authenticate --google   (or type <b>login</b> for email)'},
-  authenticate:async(a,s)=>{s.print('[*] launching Google OAuth…','cy');await gGoogle()},
-  google:async(a,s)=>{s.print('[*] launching Google OAuth…','cy');await gGoogle()},
-  login:async(a,s)=>{s.print('[*] launching Google OAuth…','cy');await gGoogle()},
-  './login.sh':async(a,s)=>{s.print('[*] launching Google OAuth…','cy');await gGoogle()},
-  register:()=>'Access is invite-only. Sign in with Google — your request goes to the admin for approval.'
- })});
- GSH.print('<span class="dim">SOC-SH 1.0 — type</span> <span class="ok">help</span> <span class="dim">for commands</span>');
-}
-
-/* ---- dashboard shell ---- */
-const VIEWS={dash:'dashboard',thm:'THM path',sections:'section progress',assess:'assessment gate',htb:'HTB practical',cases:'casebook',notes:'notes',rev:'revision',settings:'settings'};
-const VALIAS={home:'dash',dashboard:'dash',path:'thm',rooms:'thm',progress:'sections',assessment:'assess',gate:'assess',casebook:'cases',case:'cases',note:'notes',revision:'rev',config:'settings'};
-let DSH=null;
-function initDashShell(){
- const user=()=>(CUR_USER&&(CUR_USER.email||'').split('@')[0])||'analyst';
- DSH=Shell({out:'dout',input:'dcmd',prompt:'<span class="p">analyst@soc-l1</span>:<span class="h">~</span>$',cmds:Object.assign({},common,{
-  help:()=>helpTable([['status','overall progress'],['mission','current room'],['start','open current room on THM'],['done','mark current room done'],['next','show the next 3 rooms'],['cd VIEW','go to a page (thm, htb, cases, notes, rev…)'],['ls','list pages'],['grep WORD','search rooms'],['case new [title]','open a new SOC case'],['note [text]','quick note'],['whoami','signed-in user'],['logout','sign out'],['…','plus: neofetch date ping nmap cowsay matrix history clear']]),
-  whoami:()=>esc(CUR_USER?(CUR_USER.email||CUR_USER.displayName||'analyst'):'analyst'),
-  id:()=>'uid=1337('+esc(user())+') gid=1337(soc) groups=1337(soc),42(blueteam)',
-  pwd:()=>'/home/'+esc(user()),
-  neofetch:()=>neo(user()),
-  ls:()=>Object.keys(VIEWS).map(v=>'<span class="cy">'+pad(v+'/',11)+'</span><span class="dim">'+VIEWS[v]+'</span>').join('\n'),
-  cd:(a,s)=>{let v=(a[0]||'dash').replace(/\/$/,'').replace(/^~\/?/,'')||'dash';v=VALIAS[v]||v;if(!VIEWS[v])return '<span class="er">cd: '+esc(a[0])+': No such file or directory</span>';go(v);if(v!=='dash')msg('cd '+v);return v==='dash'?'':''},
-  open:(a,s)=>common_open(a),
-  status:()=>{const A=all(),d=A.filter(x=>st(x.key)==='Done').length,p=Math.round(d/A.length*100),bar='█'.repeat(Math.round(p/5))+'░'.repeat(20-Math.round(p/5));return '<span class="ok">'+bar+'</span> '+p+'%  ('+d+'/'+A.length+' rooms)\nHTB unlocked: '+CURR.filter((_,i)=>passed(i)).length+'/14 · cases: '+S.cases.length+' · notes: '+S.notes.length},
-  mission:()=>{const c=cur();return '<span class="cy">[S'+String(c.si+1).padStart(2,'0')+'] '+esc(c.s)+'</span>\n→ '+esc(c.r)+'  <span class="am">('+st(c.key)+')</span>'},
-  next:()=>{const A=all().filter(x=>st(x.key)!=='Done').slice(0,3);return A.length?A.map((x,i)=>(i?'  ':'<span class="ok">▶ </span>')+esc(x.r)+' <span class="dim">· S'+(x.si+1)+'</span>').join('\n'):'<span class="ok">All rooms complete. 🎉</span>'},
-  start:()=>{const c=cur();start();return '<span class="ok">[+]</span> opening '+esc(c.r)+' on TryHackMe…'},
-  done:()=>{const c=cur();done();return '<span class="ok">[✓]</span> '+esc(c.r)+' marked done'},
-  grep:a=>{const q=a.join(' ').toLowerCase();if(!q)return 'usage: grep WORD';const r=all().filter(x=>(x.r+' '+x.s).toLowerCase().includes(q));return r.length?r.slice(0,12).map(x=>pad('S'+(x.si+1),4)+esc(x.r)+' <span class="dim">['+st(x.key)+']</span>').join('\n'):'(no match)'},
-  case:(a)=>{if(a[0]==='new'){newCase(a.slice(1).join(' ')||undefined);return ''}if(a[0]==='ls'){return S.cases.length?S.cases.map(c=>esc(c.id)+'  '+esc(c.title)+' <span class="dim">['+esc(c.verdict)+']</span>').join('\n'):'(no cases)'}return 'usage: case new [title] | case ls'},
-  note:(a)=>{if(!a.length){go('notes');return ''}const t=a.join(' ');const n={id:nid(),title:t.slice(0,60),room:'',tags:'quick',body:t,updated:Date.now()};S.notes.unshift(n);save();return '<span class="ok">[+]</span> note saved'},
-  logout:()=>{signOut();return ''},
-  exit:()=>{signOut();return 'logout'}
- })});
-}
-function common_open(a){const t=(a[0]||'').toLowerCase();if(t==='thm'){thm();return '[+] opening TryHackMe'}if(t==='htb'){openUrl('https://app.hackthebox.com/sherlocks');return '[+] opening HackTheBox'}return 'usage: open thm | open htb'}
-initLoginShell();initDashShell();
-
-function applyRgb(on){document.documentElement.dataset.rgb=on?'on':'off';const s=document.getElementById('rgbSw');if(s)s.setAttribute('aria-checked',on?'true':'false')}
-function toggleRgb(){const on=document.documentElement.dataset.rgb!=='on';applyRgb(on);try{localStorage.setItem('SOC_L1_RGB',on?'on':'off')}catch(e){}msg('RGB effects '+(on?'on':'off'))}
-try{applyRgb(localStorage.getItem('SOC_L1_RGB')!=='off')}catch(e){applyRgb(true)}
-renderDash();
-</script></body></html>
+</script>
+<script src="../assets/center.js"></script></body></html>

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en" data-rgb="on"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Command Centers // OFFSEC By Vijay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+@property --a{syntax:'<angle>';inherits:false;initial-value:0deg}
+:root{--bg:#0a111c;--panel:#111b2a;--panel2:#16233a;--line:#1e2c42;--txt:#e6edf6;--muted:#8391a7;--green:#9fef00;--cyan:#00e5ff;--mag:#ff2bd6;--red:#ff3e5b;--amber:#ffb800;--violet:#8f5bff;
+--rgb:linear-gradient(90deg,var(--green),var(--cyan),var(--violet),var(--mag),var(--green));
+--mono:"JetBrains Mono",ui-monospace,Consolas,monospace;--disp:"Rajdhani","Segoe UI",system-ui,sans-serif;--sans:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color-scheme:dark}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;min-height:100%;color:var(--txt);font:15px/1.6 var(--sans);background:
+ radial-gradient(900px 500px at 85% -10%,#00e5ff14,transparent 60%),radial-gradient(800px 500px at 10% 110%,#9fef0012,transparent 60%),
+ linear-gradient(#ffffff05 1px,transparent 1px) 0 0/28px 28px,linear-gradient(90deg,#ffffff05 1px,transparent 1px) 0 0/28px 28px,var(--bg);background-attachment:fixed}
+html[data-rgb="on"] body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;background:repeating-linear-gradient(0deg,#0000 0 2px,#00000018 2px 3px)}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:#0a111ce6;backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+html[data-rgb="on"] .bar::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:var(--rgb);background-size:300% 100%;animation:flow 8s linear infinite}
+.barin{max-width:1180px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:18px}
+.brand{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--txt);margin-right:auto}
+.logo{position:relative;width:36px;height:36px;display:grid;place-items:center;border-radius:9px;color:var(--green);font:800 14px var(--mono);isolation:isolate}
+.logo::before{content:"";position:absolute;inset:-2px;border-radius:11px;background:conic-gradient(from var(--a),var(--green),var(--cyan),var(--violet),var(--mag),var(--green));z-index:-2;animation:spin 4s linear infinite}
+.logo::after{content:"";position:absolute;inset:0;border-radius:9px;background:var(--panel);z-index:-1}
+.brand b{font:700 19px var(--disp)}
+.links{display:flex;gap:4px}
+.links a{color:#a9b5c7;text-decoration:none;font:600 15px var(--disp);padding:6px 12px;border-radius:7px}
+.links a:hover{color:#fff;background:var(--panel)}.links a.on{color:var(--green);background:#9fef0014}
+.wrap{max-width:1180px;margin:0 auto;padding:34px 20px 60px}
+.term{font:13px var(--mono);background:#060b13;border:1px solid var(--line);border-radius:10px;padding:9px 14px;margin-bottom:22px;overflow-x:auto;white-space:nowrap}
+.term .p{color:var(--green)}.term .h{color:var(--cyan)}
+.cursor{display:inline-block;width:8px;height:15px;background:var(--green);vertical-align:-2px;margin-left:4px;animation:blink 1s steps(1) infinite}
+.ey{font:600 11px var(--mono);color:var(--green);letter-spacing:2px}.ey::before{content:"// "}
+h1{font:700 44px/1.05 var(--disp);margin:6px 0 8px}
+html[data-rgb="on"] h1{background:var(--rgb);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flow 10s linear infinite}
+.lead{color:var(--muted);margin:0 0 26px;max-width:680px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.center{position:relative;display:flex;flex-direction:column;gap:12px;padding:22px;border-radius:16px;text-decoration:none;color:var(--txt);background:linear-gradient(180deg,var(--panel),#0e1624);border:1px solid var(--line);overflow:hidden;transition:transform .15s,border-color .15s,box-shadow .15s}
+.center::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--c);box-shadow:0 0 16px var(--c)}
+a.center:hover{transform:translateY(-3px);border-color:var(--c);box-shadow:0 0 24px color-mix(in srgb,var(--c) 20%,transparent)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ic{width:48px;height:48px;border-radius:12px;display:grid;place-items:center;font:800 18px var(--mono);color:var(--c);background:color-mix(in srgb,var(--c) 12%,transparent);border:1px solid color-mix(in srgb,var(--c) 40%,transparent)}
+.st{font:600 10px var(--mono);letter-spacing:1px;padding:4px 9px;border-radius:99px;border:1px solid currentColor}
+.center h2{margin:0;font:700 26px/1.1 var(--disp)}
+.center p{margin:0;color:var(--muted);font-size:14px}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font:11px var(--mono);padding:3px 8px;border-radius:6px;border:1px solid var(--line);background:#060b13;color:#c6d0dd}
+.prog{margin-top:auto}
+.pl{display:flex;justify-content:space-between;font:12px var(--mono);color:var(--muted);margin-bottom:6px}
+.pl b{color:var(--c);font-size:14px}
+.bar2{height:7px;background:#060b13;border:1px solid var(--line);border-radius:99px;overflow:hidden}
+.bar2 i{display:block;height:100%;background:var(--c);box-shadow:0 0 10px var(--c)}
+.go{font:600 15px var(--disp);color:var(--c)}
+.center.soon{opacity:.55;border-style:dashed}
+.center.soon::before{box-shadow:none}
+.note{font:11px var(--mono);color:var(--muted);margin-top:18px}
+@keyframes spin{to{--a:360deg}}@keyframes flow{to{background-position:300% 0}}@keyframes blink{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media(max-width:640px){.barin{flex-wrap:wrap;gap:8px;padding:10px 14px}.links{width:100%;overflow-x:auto}.wrap{padding:22px 14px 50px}h1{font-size:34px}.grid{grid-template-columns:1fr}}
+</style></head>
+<body>
+<header class="bar"><div class="barin">
+ <a class="brand" href="../"><span class="logo">&gt;_</span><b>OFFSEC By Vijay</b></a>
+ <nav class="links"><a href="../">Home</a><a href="./" class="on">Centers</a><a href="../writeups/">Write-ups</a></nav>
+</div></header>
+<main class="wrap">
+ <div class="term" aria-hidden="true"><span class="p">operator@offsec</span>:<span class="h">~/centers</span>$ ls --tracks<span class="cursor"></span></div>
+ <div class="ey">TRAINING TRACKS</div>
+ <h1>Command Centers</h1>
+ <p class="lead">One command center per discipline — each with its own learning path, assessment gates, practice labs, case log, notes and GitHub vault. Invite-only sign-in.</p>
+ <div class="grid" id="grid"></div>
+ <p class="note">Progress bars show progress saved on this device. Open a center and sign in for your synced progress.</p>
+</main>
+<script>
+/* ===== add a new center here ===== */
+const CENTERS=[
+ {href:'../soc/',key:'SOC_L1_OFFLINE_V1',total:79,icon:'&gt;_',color:'var(--cyan)',title:'SOC Level 1',status:'LIVE',
+  desc:'Blue team: alert triage, SIEM, phishing, network and endpoint monitoring, with HTB Sherlocks as the practical layer.',
+  tags:['TryHackMe SOC L1','HTB Sherlocks','SOC cases']},
+ {href:'../pentest/',key:'OFFSEC_PENTEST_V1',total:97,icon:'#!',color:'var(--red)',title:'Penetration Testing',status:'LIVE',
+  desc:'Red team: recon, web and AD attacks, privilege escalation and reporting — Jr Penetration Tester path, then HTB Academy CPTS.',
+  tags:['THM Jr Pentester','HTB CPTS','Engagements']},
+ {icon:'$_',color:'var(--amber)',title:'Bug Bounty',status:'PLANNED',desc:'Web application hunting: PortSwigger Academy topics, live programs and a findings log with CVSS severity.',tags:['PortSwigger','HackerOne','Findings']},
+ {icon:'☁',color:'var(--violet)',title:'Cloud Security (Azure)',status:'PLANNED',desc:'Securing and attacking Azure: Entra ID, Defender, Sentinel, network controls and cloud misconfigurations.',tags:['Azure','Sentinel','Entra ID']}
+];
+/* ================================= */
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function localDone(key){let best=0;try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k===key||k.startsWith(key+'_')){const s=JSON.parse(localStorage.getItem(k)||'{}');const d=Object.values(s.rooms||{}).filter(r=>r&&r.status==='Done').length;if(d>best)best=d}}}catch(e){}return best}
+document.getElementById('grid').innerHTML=CENTERS.map(c=>{
+ const live=!!c.href,d=live?localDone(c.key):0,p=live&&c.total?Math.min(100,Math.round(d/c.total*100)):0;
+ const inner='<div class="top"><div class="ic">'+c.icon+'</div><span class="st" style="color:'+(live?'var(--green)':'var(--muted)')+'">'+esc(c.status)+'</span></div><h2>'+esc(c.title)+'</h2><p>'+esc(c.desc)+'</p><div class="tags">'+c.tags.map(t=>'<span class="tag">'+esc(t)+'</span>').join('')+'</div>'+
+  (live?'<div class="prog"><div class="pl"><span>'+d+' / '+c.total+' rooms</span><b>'+p+'%</b></div><div class="bar2"><i style="width:'+p+'%"></i></div></div><span class="go">Enter center →</span>':'<div class="prog"><span class="pl">Coming soon</span></div>');
+ return live?'<a class="center" style="--c:'+c.color+'" href="'+c.href+'">'+inner+'</a>':'<div class="center soon" style="--c:'+c.color+'">'+inner+'</div>'}).join('');
+try{if(localStorage.getItem('SOC_L1_RGB')==='off')document.documentElement.dataset.rgb='off'}catch(e){}
+</script></body></html>

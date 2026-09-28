@@ -127,95 +127,100 @@ textarea.in{resize:vertical}
 <body>
 <header class="bar"><div class="barin">
  <a class="brand" href="../"><span class="logo">&gt;_</span><b id="siteName">OFFSEC By Vijay</b></a>
- <nav class="links"><a href="../">Home</a><a href="./" class="on">Write-ups</a><a href="../soc/">SOC Center</a></nav>
+ <nav class="links"><a href="../">Home</a><a href="./" class="on">Write-ups</a><a href="../centers/">Centers</a></nav>
  <div id="adminBar" hidden><button class="btn sm lime" onclick="location.hash='#/new'">+ New</button></div>
 </div></header>
 <main class="wrap" id="app"></main>
-<footer class="foot">© <span id="yr"></span> <span id="siteName2">OFFSEC By Vijay</span> · Write-ups cover retired / public content only.<br><span id="adminFoot"><button onclick="adminLogin()">Admin</button></span></footer>
+<footer class="foot">© <span id="yr"></span> <span id="siteName2">OFFSEC By Vijay</span> · Write-ups cover retired / public content only · stored as Markdown on GitHub.<br><span id="adminFoot"><button onclick="adminLogin()">Admin</button></span></footer>
 <div id="toast" class="toast" role="status"></div>
 <div id="modal" class="modal" role="dialog" aria-modal="true"><div class="card box"><h3 id="mtitle"></h3><div id="mbody" class="muted"></div><div class="acts" id="mact"></div></div></div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+<script src="../assets/gh.js"></script>
 <script>
 /* ===== SITE SETTINGS ===== */
 const SITE_NAME = "OFFSEC By Vijay";
-const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyD0uDbhkIlct7BUUBQTcuG_F75ZbeV6Y9A",
-  authDomain: "soc-l1cc.firebaseapp.com",
-  projectId: "soc-l1cc",
-  storageBucket: "soc-l1cc.firebasestorage.app",
-  messagingSenderId: "94446378090",
-  appId: "1:94446378090:web:e3fe1bd60fdccbe8f93e13"
-};
+const OWNER = "vijaydebarki";                 // GitHub username
+const SITE_REPO = "vijaydebarki.github.io";   // public repo that hosts this site
 /* ========================= */
 document.getElementById('siteName').textContent=SITE_NAME;document.getElementById('siteName2').textContent=SITE_NAME;document.getElementById('yr').textContent=new Date().getFullYear();
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function md(src){try{if(window.marked&&window.DOMPurify)return DOMPurify.sanitize(marked.parse(src||''))}catch(e){}return '<pre>'+esc(src)+'</pre>'}
-let tT;function msg(t,bad){const e=$('toast');e.textContent=(bad?'[!] ':'[✓] ')+t;e.className='toast show'+(bad?' bad':'');clearTimeout(tT);tT=setTimeout(()=>e.className='toast',2600)}
+let tT;function msg(t,bad){const e=$('toast');e.textContent=(bad?'[!] ':'[✓] ')+t;e.className='toast show'+(bad?' bad':'');clearTimeout(tT);tT=setTimeout(()=>e.className='toast',3200)}
 function ask(title,body,btns){const m=$('modal');$('mtitle').textContent=title;$('mbody').textContent=body;const a=$('mact');a.innerHTML='';btns.forEach(b=>{const e=document.createElement('button');e.className='btn'+(b.cls?' '+b.cls:'');e.textContent=b.label;e.onclick=()=>{m.classList.remove('show');b.fn&&b.fn()};a.appendChild(e)});m.classList.add('show')}
 $('modal').addEventListener('click',e=>{if(e.target.id==='modal')e.currentTarget.classList.remove('show')});
 const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 const fmt=s=>{if(!s)return '';const d=new Date(s+'T00:00:00');return isNaN(d)?s:d.toLocaleDateString(undefined,{day:'2-digit',month:'short',year:'numeric'})};
 const PLAT={TryHackMe:'t-thm',HackTheBox:'t-htb',Other:'t-oth'};
 const platTag=p=>'<span class="tag '+(PLAT[p]||'t-oth')+'">'+esc(p||'Other')+'</span>';
-const diffTag=d=>d?'<span class="tag d-'+esc(d.toLowerCase())+'">'+esc(d)+'</span>':'';
+const diffTag=d=>d?'<span class="tag d-'+esc(String(d).toLowerCase())+'">'+esc(d)+'</span>':'';
 const accent=p=>p==='TryHackMe'?'var(--red)':p==='HackTheBox'?'var(--green)':'var(--violet)';
+const tagsOf=t=>Array.isArray(t)?t:String(t||'').split(',').map(s=>s.trim()).filter(Boolean);
 
-let AUTH=null,DB=null,ADMIN=false,POSTS=[],LOADED=false,FILTER='All',Q='';
-function ready(){return window.firebase&&FIREBASE_CONFIG.apiKey&&!/PASTE/.test(FIREBASE_CONFIG.apiKey)}
+let ADMIN=false,POSTS=[],DRAFTS=[],LOADED=false,FILTER='All',Q='';
+const VAULT=()=>GH.vaultRepo();
 
-async function load(){
- if(!DB){POSTS=[];LOADED=true;return}
- try{
-  let snap;
-  if(ADMIN){snap=await DB.collection('writeups').get()}
-  else{snap=await DB.collection('writeups').where('published','==',true).get()}
-  POSTS=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.date||'').localeCompare(a.date||'')||(b.updated||0)-(a.updated||0));
- }catch(e){POSTS=[];console.error(e);if(ADMIN)msg('Could not load write-ups — check Firestore rules',true)}
- LOADED=true;
+/* ---------- loading ---------- */
+async function loadPublic(){
+ try{const r=await fetch('posts/index.json?t='+Date.now(),{cache:'no-store'});POSTS=r.ok?await r.json():[]}catch(e){POSTS=[]}
+ POSTS=(Array.isArray(POSTS)?POSTS:[]).map(p=>({...p,published:true}));
 }
+async function loadAdmin(){
+ try{const g=await GH.get(SITE_REPO,'writeups/posts/index.json');POSTS=(g?JSON.parse(g.text||'[]'):[]).map(p=>({...p,published:true}))}catch(e){msg(e.message,true)}
+ DRAFTS=[];
+ try{const files=(await GH.list(VAULT(),'drafts')).filter(f=>f.name.endsWith('.md'));
+  DRAFTS=(await Promise.all(files.map(async f=>{const g=await GH.get(VAULT(),f.path);const {meta}=GH.fm.parse(g.text);return {...meta,slug:meta.slug||f.name.replace(/\.md$/,''),tags:tagsOf(meta.tags),published:false}}))).filter(Boolean)}
+ catch(e){msg('Drafts: '+e.message,true)}
+}
+async function load(){LOADED=false;if(ADMIN)await loadAdmin();else await loadPublic();LOADED=true}
+function allPosts(){return [...DRAFTS,...POSTS].sort((a,b)=>(b.date||'').localeCompare(a.date||''))}
 
+/* ---------- list ---------- */
 function viewList(){
- const q=Q.toLowerCase();
- const list=POSTS.filter(p=>(FILTER==='All'||p.platform===FILTER)&&((p.title||'')+' '+(p.summary||'')+' '+(p.tags||[]).join(' ')).toLowerCase().includes(q));
- const counts=n=>n==='All'?POSTS.length:POSTS.filter(p=>p.platform===n).length;
+ const q=Q.toLowerCase(),A=allPosts();
+ const list=A.filter(p=>(FILTER==='All'||p.platform===FILTER)&&((p.title||'')+' '+(p.summary||'')+' '+tagsOf(p.tags).join(' ')).toLowerCase().includes(q));
+ const counts=n=>n==='All'?A.length:A.filter(p=>p.platform===n).length;
  $('app').innerHTML='<div class="term" aria-hidden="true"><span class="p">visitor@'+esc(SITE_NAME.toLowerCase().replace(/[^a-z0-9]+/g,'-'))+'</span>:<span class="h">~/writeups</span>$ ls -la<span class="cursor"></span></div>'+
  '<div class="hero"><div><div class="ey">FIELD REPORTS</div><h1 class="big">Write-ups</h1><p>Investigations and walkthroughs from TryHackMe, HackTheBox and SOC labs — approach, evidence, detections and lessons learned.</p></div></div>'+
  '<div class="tools"><div class="search"><input id="q" placeholder="grep write-ups, tags…" aria-label="Search write-ups"></div><div class="chips">'+
  ['All','TryHackMe','HackTheBox','Other'].map(n=>'<button class="chip'+(FILTER===n?' on':'')+'" data-f="'+n+'">'+n+' · '+counts(n)+'</button>').join('')+'</div></div>'+
  (!LOADED?'<div class="empty">Loading…</div>':list.length?'<div class="grid">'+list.map(p=>
-  '<a class="card post" style="--c:'+accent(p.platform)+'" href="#/p/'+encodeURIComponent(p.id)+'"><div class="meta">'+platTag(p.platform)+diffTag(p.difficulty)+(p.published?'':'<span class="tag draft">DRAFT</span>')+'<span>'+fmt(p.date)+'</span></div><h3>'+esc(p.title||'Untitled')+'</h3>'+(p.summary?'<p>'+esc(p.summary)+'</p>':'')+
-  ((p.tags||[]).length?'<div class="tagtxt">'+p.tags.map(t=>'#'+esc(t)).join(' ')+'</div>':'')+'</a>').join('')+'</div>'
- :'<div class="empty">'+(POSTS.length?'No write-ups match your search.':'No write-ups published yet — check back soon.')+'</div>');
+  '<a class="card post" style="--c:'+accent(p.platform)+'" href="#/p/'+encodeURIComponent(p.slug)+(p.published?'':'?draft')+'"><div class="meta">'+platTag(p.platform)+diffTag(p.difficulty)+(p.published?'':'<span class="tag draft">DRAFT</span>')+'<span>'+fmt(p.date)+'</span></div><h3>'+esc(p.title||'Untitled')+'</h3>'+(p.summary?'<p>'+esc(p.summary)+'</p>':'')+
+  (tagsOf(p.tags).length?'<div class="tagtxt">'+tagsOf(p.tags).map(t=>'#'+esc(t)).join(' ')+'</div>':'')+'</a>').join('')+'</div>'
+ :'<div class="empty">'+(A.length?'No write-ups match your search.':'No write-ups published yet — check back soon.')+'</div>');
  const qi=$('q');qi.value=Q;qi.oninput=e=>{Q=e.target.value;const pos=e.target.selectionStart;viewList();const n=$('q');n.focus();n.setSelectionRange(pos,pos)};
  document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{FILTER=c.dataset.f;viewList()});
  document.title='Write-ups // '+SITE_NAME;
 }
 
-async function viewPost(id){
- let p=POSTS.find(x=>x.id===id);
- if(!p&&DB){try{const d=await DB.collection('writeups').doc(id).get();if(d.exists)p={id:d.id,...d.data()}}catch(e){}}
- if(!p){$('app').innerHTML='<div class="article"><a class="back" href="#/">← cd ../writeups</a><div class="empty" style="margin-top:20px">Write-up not found.</div></div>';return}
+/* ---------- single post ---------- */
+async function fetchPost(slug,draft){
+ if(draft&&ADMIN){const g=await GH.get(VAULT(),'drafts/'+slug+'.md');if(!g)return null;const {meta,body}=GH.fm.parse(g.text);return {...meta,slug,body,tags:tagsOf(meta.tags),published:false,_sha:g.sha}}
+ if(ADMIN){const g=await GH.get(SITE_REPO,'writeups/posts/'+slug+'.md');if(!g)return null;const {meta,body}=GH.fm.parse(g.text);return {...meta,slug,body,tags:tagsOf(meta.tags),published:true,_sha:g.sha}}
+ const r=await fetch('posts/'+encodeURIComponent(slug)+'.md?t='+Date.now(),{cache:'no-store'});if(!r.ok)return null;
+ const {meta,body}=GH.fm.parse(await r.text());return {...meta,slug,body,tags:tagsOf(meta.tags),published:true};
+}
+async function viewPost(slug,draft){
+ $('app').innerHTML='<div class="empty">Loading…</div>';
+ let p=null;try{p=await fetchPost(slug,draft)}catch(e){msg(e.message,true)}
+ if(!p){$('app').innerHTML='<div class="article"><a class="back" href="#/">← cd ../writeups</a><div class="empty" style="margin-top:20px">Write-up not found'+(ADMIN?'':' (if you just published it, give GitHub Pages a minute)')+'.</div></div>';return}
  $('app').innerHTML='<article class="article"><a class="back" href="#/">← cd ../writeups</a><h1>'+esc(p.title||'Untitled')+'</h1>'+
- '<div class="meta">'+platTag(p.platform)+diffTag(p.difficulty)+(p.published?'':'<span class="tag draft">DRAFT</span>')+'<span>'+fmt(p.date)+'</span>'+((p.tags||[]).length?'<span class="tagtxt">'+p.tags.map(t=>'#'+esc(t)).join(' ')+'</span>':'')+
- (ADMIN?'<a class="btn sm" href="#/edit/'+encodeURIComponent(p.id)+'" style="margin-left:auto">✎ Edit</a>':'')+'</div>'+
+ '<div class="meta">'+platTag(p.platform)+diffTag(p.difficulty)+(p.published?'':'<span class="tag draft">DRAFT</span>')+'<span>'+fmt(p.date)+'</span>'+(p.tags.length?'<span class="tagtxt">'+p.tags.map(t=>'#'+esc(t)).join(' ')+'</span>':'')+
+ (ADMIN?'<a class="btn sm" href="#/edit/'+encodeURIComponent(slug)+(p.published?'':'?draft')+'" style="margin-left:auto">✎ Edit</a>':'')+'</div>'+
  '<div class="mdview">'+md(p.body||'')+'</div></article>';
  document.title=(p.title||'Write-up')+' // '+SITE_NAME;window.scrollTo(0,0);
 }
 
-function slugify(s){return (s||'writeup').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,60)||'writeup'}
-function viewEdit(id){
+/* ---------- editor ---------- */
+async function viewEdit(slug,draft){
  if(!ADMIN){location.hash='#/';return}
- const p=id?POSTS.find(x=>x.id===id):null;
- if(id&&!p){$('app').innerHTML='<div class="empty">Write-up not found.</div>';return}
+ let p=null;
+ if(slug){$('app').innerHTML='<div class="empty">Loading from GitHub…</div>';try{p=await fetchPost(slug,draft)}catch(e){msg(e.message,true)}if(!p){$('app').innerHTML='<div class="empty">Write-up not found.</div>';return}}
  const v=p||{title:'',platform:'TryHackMe',difficulty:'Easy',date:today(),tags:[],summary:'',body:'## Scenario\n\n## Investigation\n\n```\n# queries / commands\n```\n\n## Findings\n\n## Detection & response\n\n## Lessons learned\n',published:false};
- $('app').innerHTML='<a class="back" href="'+(p?'#/p/'+encodeURIComponent(p.id):'#/')+'">← back</a><div class="hero" style="margin-top:10px"><div><div class="ey">ADMIN</div><h1 class="big" style="font-size:34px">'+(p?'Edit write-up':'New write-up')+'</h1></div>'+
- '<div style="display:flex;gap:8px;flex-wrap:wrap">'+(p?'<button class="btn" id="bDel">Delete</button>':'')+'<button class="btn lime" id="bSave">Save</button></div></div>'+
+ $('app').innerHTML='<a class="back" href="'+(p?'#/p/'+encodeURIComponent(p.slug)+(p.published?'':'?draft'):'#/')+'">← back</a><div class="hero" style="margin-top:10px"><div><div class="ey">ADMIN · SAVES TO GITHUB</div><h1 class="big" style="font-size:34px">'+(p?'Edit write-up':'New write-up')+'</h1></div>'+
+ '<div style="display:flex;gap:8px;flex-wrap:wrap">'+(p?'<button class="btn" id="bDel">Delete</button>':'')+'<button class="btn" id="bDraft">Save draft</button><button class="btn lime" id="bPub">Publish</button></div></div>'+
  '<div class="edgrid"><div class="card panel">'+
  '<label class="f"><span>Title</span><input class="in" id="eTitle"></label>'+
  '<div class="row3"><label class="f"><span>Platform</span><select class="in" id="ePlat"><option>TryHackMe</option><option>HackTheBox</option><option>Other</option></select></label>'+
@@ -223,55 +228,63 @@ function viewEdit(id){
  '<label class="f"><span>Date</span><input class="in" type="date" id="eDate"></label></div>'+
  '<label class="f"><span>Tags (comma separated)</span><input class="in" id="eTags" placeholder="phishing, splunk, mitre"></label>'+
  '<label class="f"><span>Short summary (shown on the card)</span><textarea class="in" id="eSum" rows="2"></textarea></label>'+
- '<label class="f"><span>Body — Markdown</span><textarea class="in body" id="eBody"></textarea></label>'+
- '<label class="check"><input type="checkbox" id="ePub"> Published (visible to everyone)</label>'+
+ '<label class="f"><span>Body — Markdown <label class="btn sm" style="margin-left:8px;cursor:pointer">🖼 Add screenshot<input type="file" id="eImg" accept="image/png,image/jpeg,image/gif,image/webp" hidden></label></span><textarea class="in body" id="eBody"></textarea></label>'+
+ '<p class="muted" style="font:12px var(--mono);margin:0">Publish → <b>writeups/posts/'+(p?esc(p.slug):'&lt;slug&gt;')+'.md</b> in '+esc(SITE_REPO)+' (public). Save draft → <b>drafts/</b> in '+esc(VAULT())+' (private).</p>'+
  '</div><div class="card panel prev"><div class="ey" style="margin-bottom:10px">LIVE PREVIEW</div><div class="mdview" id="ePrev"></div></div></div>';
- $('eTitle').value=v.title;$('ePlat').value=v.platform||'TryHackMe';$('eDiff').value=v.difficulty||'';$('eDate').value=v.date||today();$('eTags').value=(v.tags||[]).join(', ');$('eSum').value=v.summary||'';$('eBody').value=v.body||'';$('ePub').checked=!!v.published;
+ $('eTitle').value=v.title||'';$('ePlat').value=v.platform||'TryHackMe';$('eDiff').value=v.difficulty||'';$('eDate').value=v.date||today();$('eTags').value=tagsOf(v.tags).join(', ');$('eSum').value=v.summary||'';$('eBody').value=v.body||'';
  const upd=()=>{$('ePrev').innerHTML='<h1>'+esc($('eTitle').value||'Untitled')+'</h1>'+md($('eBody').value)};upd();
  $('eTitle').oninput=upd;$('eBody').oninput=upd;
  $('eBody').onkeydown=e=>{if(e.key==='Tab'){e.preventDefault();const b=e.target,s=b.selectionStart;b.setRangeText('  ',s,b.selectionEnd,'end');upd()}};
- $('bSave').onclick=async()=>{
-  const data={title:$('eTitle').value.trim()||'Untitled',platform:$('ePlat').value,difficulty:$('eDiff').value,date:$('eDate').value||today(),
-   tags:$('eTags').value.split(',').map(t=>t.trim()).filter(Boolean),summary:$('eSum').value.trim(),body:$('eBody').value,published:$('ePub').checked,updated:Date.now()};
-  const btn=$('bSave');btn.disabled=true;
-  try{let docId=p?p.id:slugify(data.title)+'-'+Date.now().toString(36).slice(-4);
-   await DB.collection('writeups').doc(docId).set(data);
-   await load();msg(data.published?'Published':'Saved as draft');location.hash='#/p/'+encodeURIComponent(docId);
-  }catch(e){msg(e.code==='permission-denied'?'Not allowed — this account is not the site admin (check Firestore rules).':'Save failed: '+e.message,true)}
-  btn.disabled=false};
- if(p)$('bDel').onclick=()=>ask('Delete this write-up?','"'+(p.title||'Untitled')+'" will be removed permanently.',[{label:'Cancel'},{label:'Delete',cls:'lime',fn:async()=>{try{await DB.collection('writeups').doc(p.id).delete();await load();msg('Deleted');location.hash='#/'}catch(e){msg('Delete failed: '+e.message,true)}}}]);
+ $('eImg').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;if(f.size>4e6){msg('Image too large (max 4 MB)',true);return}
+  const name=Date.now().toString(36)+'-'+GH.slug(f.name.replace(/\.[^.]+$/,''))+'.'+(f.name.split('.').pop()||'png').toLowerCase();
+  msg('Uploading '+f.name+'…');
+  try{const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(',')[1]);r.onerror=rej;r.readAsDataURL(f)});
+   await GH.putRaw(SITE_REPO,'writeups/img/'+name,b64,undefined,'Add image '+name);
+   const b=$('eBody'),s=b.selectionStart;b.setRangeText('\n![screenshot](img/'+name+')\n',s,b.selectionEnd,'end');upd();msg('Screenshot uploaded (visible after GitHub Pages rebuilds)')}
+  catch(err){msg(err.message,true)}};
+ const collect=()=>({title:$('eTitle').value.trim()||'Untitled',platform:$('ePlat').value,difficulty:$('eDiff').value,date:$('eDate').value||today(),
+   tags:tagsOf($('eTags').value),summary:$('eSum').value.trim()});
+ const busy=on=>['bDraft','bPub','bDel'].forEach(id=>{const b=$(id);if(b)b.disabled=on});
+ const theSlug=()=>p?p.slug:GH.slug($('eTitle').value)+'-'+Date.now().toString(36).slice(-4);
+ let SLUG=p?p.slug:null;
+ async function removeFromIndex(sl){const g=await GH.get(SITE_REPO,'writeups/posts/index.json');const arr=g?JSON.parse(g.text||'[]'):[];const n=arr.filter(x=>x.slug!==sl);if(n.length!==arr.length)await GH.put(SITE_REPO,'writeups/posts/index.json',JSON.stringify(n,null,2)+'\n',g&&g.sha,'Update write-ups index')}
+ $('bPub').onclick=async()=>{busy(true);try{
+   const meta=collect();SLUG=SLUG||theSlug();const body=$('eBody').value;
+   const path='writeups/posts/'+SLUG+'.md';
+   await GH.put(SITE_REPO,path,GH.fm.build({...meta,slug:SLUG},body),await GH.sha(SITE_REPO,path),'Publish write-up: '+meta.title);
+   const g=await GH.get(SITE_REPO,'writeups/posts/index.json');let arr=g?JSON.parse(g.text||'[]'):[];
+   arr=arr.filter(x=>x.slug!==SLUG);arr.push({slug:SLUG,...meta});arr.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+   await GH.put(SITE_REPO,'writeups/posts/index.json',JSON.stringify(arr,null,2)+'\n',g&&g.sha,'Update write-ups index');
+   if(p&&!p.published||!p){await GH.del(VAULT(),'drafts/'+SLUG+'.md',undefined,'Draft published: '+meta.title).catch(()=>{})}
+   await load();msg('Published — live for visitors in about a minute');location.hash='#/p/'+encodeURIComponent(SLUG);
+  }catch(e){msg(e.message,true)}busy(false)};
+ $('bDraft').onclick=async()=>{busy(true);try{
+   const meta=collect();SLUG=SLUG||theSlug();const path='drafts/'+SLUG+'.md';
+   await GH.put(VAULT(),path,GH.fm.build({...meta,slug:SLUG},$('eBody').value),await GH.sha(VAULT(),path),'Save draft: '+meta.title);
+   if(p&&p.published){await GH.del(SITE_REPO,'writeups/posts/'+SLUG+'.md',undefined,'Unpublish: '+meta.title);await removeFromIndex(SLUG)}
+   await load();msg('Draft saved to '+VAULT()+' (private)');location.hash='#/p/'+encodeURIComponent(SLUG)+'?draft';
+  }catch(e){msg(e.message,true)}busy(false)};
+ if(p)$('bDel').onclick=()=>ask('Delete this write-up?','"'+(p.title||'Untitled')+'" will be deleted from GitHub. It stays recoverable in the repo history.',[{label:'Cancel'},{label:'Delete',cls:'lime',fn:async()=>{busy(true);try{
+   if(p.published){await GH.del(SITE_REPO,'writeups/posts/'+p.slug+'.md',undefined,'Delete write-up: '+p.title);await removeFromIndex(p.slug)}
+   else await GH.del(VAULT(),'drafts/'+p.slug+'.md',undefined,'Delete draft: '+p.title);
+   await load();msg('Deleted');location.hash='#/'}catch(e){msg(e.message,true)}busy(false)}}]);
  document.title=(p?'Edit':'New')+' write-up // '+SITE_NAME;window.scrollTo(0,0);
 }
 
-function route(){const h=location.hash||'#/';
- if(h.startsWith('#/p/'))return viewPost(decodeURIComponent(h.slice(4)));
- if(h==='#/new')return viewEdit(null);
- if(h.startsWith('#/edit/'))return viewEdit(decodeURIComponent(h.slice(7)));
+/* ---------- routing ---------- */
+function route(){const h=location.hash||'#/';const [path,qs]=h.split('?');const draft=qs==='draft';
+ if(path.startsWith('#/p/'))return viewPost(decodeURIComponent(path.slice(4)),draft);
+ if(path==='#/new')return viewEdit(null);
+ if(path.startsWith('#/edit/'))return viewEdit(decodeURIComponent(path.slice(7)),draft);
  viewList()}
 window.addEventListener('hashchange',route);
 
-/* Admin: only accounts allowed by the Firestore rules can see drafts & publish */
-let WANT_ADMIN=false;
-async function checkAdmin(){
- ADMIN=false;
- if(!AUTH||!AUTH.currentUser)return;
- try{await DB.collection('writeups').where('published','==',false).limit(1).get();ADMIN=true}catch(e){ADMIN=false}
-}
-function setAdminUI(){$('adminBar').hidden=!ADMIN;$('adminFoot').innerHTML=ADMIN?'Admin: '+esc(AUTH.currentUser.email||'')+' <button onclick="adminLogout()">Sign out</button>':'<button onclick="adminLogin()">Admin</button>'}
-async function adminLogin(){
- if(!AUTH){msg('Firebase is not configured',true);return}
- WANT_ADMIN=true;
- try{if(!AUTH.currentUser)await AUTH.signInWithPopup(new firebase.auth.GoogleAuthProvider());else{await afterAuth()}}
- catch(e){msg(e.code==='auth/unauthorized-domain'?'Add this domain in Firebase → Authentication → Authorized domains':'Sign-in failed: '+(e.message||e),true)}
-}
-function adminLogout(){AUTH.signOut()}
-async function afterAuth(){
- await checkAdmin();setAdminUI();
- if(WANT_ADMIN&&!ADMIN&&AUTH.currentUser)msg('Signed in, but this account is not the site admin',true);
- WANT_ADMIN=false;await load();route();
-}
+/* ---------- admin (GitHub token) ---------- */
+function setAdminUI(){$('adminBar').hidden=!ADMIN;$('adminFoot').innerHTML=ADMIN?'Admin mode · saving to GitHub <button onclick="adminSettings()">Settings</button> <button onclick="adminExit()">Exit</button>':'<button onclick="adminLogin()">Admin</button>'}
+async function enterAdmin(){try{ADMIN=await GH.canWrite(SITE_REPO)}catch(e){ADMIN=false;msg(e.message,true)}setAdminUI();await load();route()}
+async function adminLogin(){if(!GH.ready()||GH.siteRepo()!==SITE_REPO){const ok=await GH.openSettings({owner:OWNER,siteRepo:SITE_REPO,need:['siteRepo','vaultRepo'],intro:'Write-ups are published as Markdown files to your website repo; drafts go to your private vault repo.'});if(ok!==true)return}await enterAdmin();if(ADMIN)msg('Admin mode on')}
+async function adminSettings(){const r=await GH.openSettings({owner:OWNER,siteRepo:SITE_REPO,need:['siteRepo','vaultRepo']});if(r==='disconnected'){adminExit();return}if(r)await enterAdmin()}
+function adminExit(){ADMIN=false;DRAFTS=[];setAdminUI();load().then(route)}
 
-if(ready()){firebase.initializeApp(FIREBASE_CONFIG);AUTH=firebase.auth();DB=firebase.firestore();AUTH.onAuthStateChanged(()=>afterAuth());}
-else{LOADED=true;}
-route();
+(async()=>{route();if(GH.ready()&&GH.siteRepo()===SITE_REPO){await enterAdmin()}else{await load();route()}})();
 </script></body></html>
