@@ -12,27 +12,28 @@
 const PROFILE = {
   siteName: "OFFSEC By Vijay",
   name: "Vijay Kumar Debarki",
-  headline: "IT Infrastructure & Security · Blue Team",
+  headline: "Offensive Security · Penetration Testing  |  Blue Team (SOC)",
   location: "Visakhapatnam, India",
   photo: "https://htb-sso-prod-public-storage.s3.eu-central-1.amazonaws.com/users/33696e95-ebfe-4ffd-9ece-69a385f4697c-avatar.png",
-  typing: ["whoami", "cat experience.log", "fortigate --audit policies", "./triage --alerts"],
-  pitch: "I secure the systems I run every day — firewalls, identity, endpoints and Azure — and I'm sharpening my SOC skills on TryHackMe and HackTheBox, where I'm in the top 5% globally.",
+  suggest: ["whoami", "cat about.txt", "cat skills.txt", "nmap -sV target.local", "cat certs.txt", "open cv", "cd centers"],
+  pitch: "I think like an attacker and build like a defender — ethical-hacking certified (Cisco, Edureka CSEH), top 5% on TryHackMe and Hacker rank on HackTheBox, with hands-on experience running the firewalls, identity and endpoints attackers go after.",
+  focus: [ { label: "Red Team · Offensive", pct: 70, color: "red" }, { label: "Blue Team · SOC", pct: 30, color: "cyan" } ],
   resume: "resume.pdf",            // upload your CV to the repo root with this name ("" to hide)
 
   statsAsOf: "Sep 2026",
   stats: [
-    { value: "Since 2022", label: "Hands-on in IT & security", sub: "Concentrix · Netsoft · ACN Healthcare", color: "amber"  },
-    { value: "Top 5%",     label: "TryHackMe global rank",     sub: "#134,521 · 103 rooms · 19 badges",     color: "red"    },
-    { value: "Hacker",     label: "HackTheBox rank",           sub: "Season 8 Ruby tier · Holmes CTF 2025", color: "green"  },
-    { value: "4",          label: "Security certifications",   sub: "Cisco · EC-Council · Edureka · Google", color: "violet" }
+    { value: "Top 5%",     label: "TryHackMe global rank",     sub: "#134,521 · 103 rooms · 19 badges",      color: "red"    },
+    { value: "Hacker",     label: "HackTheBox rank",           sub: "Season 8 Ruby tier · 9 Academy badges", color: "green"  },
+    { value: "2",          label: "Ethical hacking certs",     sub: "Cisco Ethical Hacker · Edureka CSEH",   color: "mag"    },
+    { value: "Since 2022", label: "Hands-on in IT & security", sub: "Firewalls · AD · Azure · Endpoints",     color: "amber"  }
   ],
 
   about: [
-    "I'm an IT infrastructure and security professional working hands-on with the controls attackers try to get past: FortiGate NGFWs, Active Directory and Group Policy, Microsoft 365, Entra ID and Intune.",
-    "Before that I built enterprise-style Azure labs — VNets, Azure Firewall, Bastion, Key Vault, Defender for Cloud and Microsoft Sentinel — and monitored endpoints with Cortex XDR and FireEye at Concentrix.",
-    "Now I'm moving deeper into security operations: working through the TryHackMe SOC Level 1 path (top 5% worldwide, 103 rooms) and HackTheBox DFIR challenges, and writing up every investigation."
+    "I'm an offensive-security practitioner with an infrastructure background. My certifications and most of my hands-on training are on the attacker side: reconnaissance and enumeration with Nmap, web application testing with Burp Suite and OWASP ZAP, exploitation with Metasploit, password attacks and privilege escalation.",
+    "I'm working through the TryHackMe Jr Penetration Tester path and the HTB Academy CPTS path, and I'm in the top 5% of TryHackMe worldwide with Hacker rank on HackTheBox.",
+    "My day job gives me the other side of the fight: I configure and maintain FortiGate NGFWs, Active Directory, Group Policy and Microsoft 365, and I've built Azure environments with Sentinel and Defender. I'm now adding SOC Level 1 skills so I can find weaknesses and understand how they get detected — a 70/30 red-to-blue balance."
   ],
-  goal: "Open to SOC Analyst (L1) / Security Analyst roles and short freelance engagements.",
+  goal: "Open to Penetration Testing / VAPT and Security Analyst roles, plus scoped freelance assessments.",
 
   experience: [
     { role: "Support Engineer – IT", org: "ACN Healthcare", date: "Oct 2025 – Present", current: true,
@@ -55,36 +56,41 @@ const PROFILE = {
   education: "B.Sc. Computer Science — Andhra University (2020)",
 
   skills: {
-    "Security Operations": ["Microsoft Sentinel", "Defender for Cloud", "Cortex XDR", "FireEye", "Splunk", "Elastic", "Alert triage"],
-    "Network Security":    ["FortiGate NGFW", "SD-WAN", "IPsec / SSL VPN", "Web filtering", "VLANs", "Cisco", "Wireshark", "Snort"],
-    "Identity & Endpoint": ["Active Directory", "Group Policy", "Entra ID", "Intune / MDM", "Autopilot", "Microsoft 365"],
-    "Cloud (Azure)":       ["Azure Firewall & WAF", "NSGs & VNets", "Bastion", "Key Vault", "RBAC", "Azure Virtual Desktop"],
-    "Analysis & Tools":    ["Phishing analysis", "MITRE ATT&CK", "Nmap", "Burp Suite", "PowerShell", "Azure CLI"]
+    "Offensive Security":  ["Nmap", "Burp Suite", "Metasploit", "OWASP ZAP", "Hydra", "John the Ripper", "Privilege escalation"],
+    "Web App Testing":     ["OWASP Top 10", "SQL injection", "XSS", "IDOR", "File inclusion", "Command injection", "API testing"],
+    "Network & AD":        ["Enumeration", "SMB / LDAP / Kerberos", "Active Directory", "FortiGate NGFW", "VPN (IPsec / SSL)", "Wireshark"],
+    "Blue Team / SOC":     ["Microsoft Sentinel", "Defender", "Cortex XDR", "Splunk", "Alert triage", "Phishing analysis"],
+    "Cloud & Identity":    ["Azure Firewall & WAF", "NSGs & VNets", "Entra ID", "Intune", "Key Vault", "RBAC"],
+    "Scripting & Tools":   ["PowerShell", "Bash", "Python basics", "Azure CLI", "Linux", "Kali"]
   },
 
   services: [
-    { icon: "⛨", title: "FortiGate firewall setup & review", text: "Policy and rule review, VLANs, SD-WAN, IPsec/SSL VPN and web-filtering configuration for small offices — with a written change summary." },
-    { icon: "☁", title: "Microsoft 365 & Intune hardening", text: "MFA, Entra ID and conditional-access basics, Intune compliance policies and device enrolment for small teams." },
+    { icon: "⚔", title: "Web application security testing", text: "Authorised testing against the OWASP Top 10 — injection, broken access control, auth and session flaws — with reproducible findings and fixes." },
+    { icon: "⌖", title: "Vulnerability assessment", text: "External and internal network scanning, service enumeration and misconfiguration review, prioritised by real-world risk." },
+    { icon: "⛨", title: "FortiGate firewall review", text: "Policy and rule review, VLANs, SD-WAN, IPsec/SSL VPN and web filtering for small offices — with a written change summary." },
+    { icon: "☁", title: "Microsoft 365 & Intune hardening", text: "MFA, Entra ID and conditional-access basics, Intune compliance and device enrolment for small teams." },
     { icon: "✉", title: "Phishing email analysis", text: "Header, link and attachment analysis of suspicious emails, with a clear verdict and the IOCs to block." },
-    { icon: "✓", title: "Small-business security check", text: "Plain-language review of firewall, accounts, backups, patching and device encryption — with prioritised fixes." }
+    { icon: "✓", title: "Small-business security check", text: "Plain-language review of firewall, accounts, backups, patching and encryption — with prioritised fixes." }
   ],
-  servicesNote: "Scoped, fixed-price engagements. Every job ends with a written report.",
+  servicesNote: "Every engagement is written-authorised and scoped, and ends with a professional report.",
 
   credlyProfile: "https://www.credly.com/users/vijay-debarki/badges",
   credlyBadgeIds: [],              // paste badge IDs here, e.g. ["1a2b3c4d-...."]
   certifications: [
     { name: "Ethical Hacker", issuer: "Cisco", date: "", url: "https://www.credly.com/users/vijay-debarki/badges", status: "Credly verified" },
-    { name: "Wireshark", issuer: "EC-Council", date: "", url: "", status: "Earned" },
     { name: "Certified Security Expert Hacking (CSEH)", issuer: "Edureka", date: "", url: "", status: "Earned" },
-    { name: "IT Support Professional Certificate", issuer: "Google", date: "", url: "", status: "Earned" },
+    { name: "Jr Penetration Tester Path", issuer: "TryHackMe", date: "2026", url: "https://tryhackme.com/path/outline/jrpenetrationtester", status: "In progress" },
+    { name: "CPTS Path", issuer: "HTB Academy", date: "2026", url: "https://academy.hackthebox.com/path/preview/penetration-tester", status: "In progress" },
+    { name: "Wireshark", issuer: "EC-Council", date: "", url: "", status: "Earned" },
     { name: "Holmes CTF 2025", issuer: "Hack The Box", date: "Sep 2025", url: "https://profile.hackthebox.com/profile/019d6da5-1517-73c7-aa06-116ea1518bbd", status: "Event certificate" },
-    { name: "SOC Level 1 Path", issuer: "TryHackMe", date: "2026", url: "https://tryhackme.com/path/outline/soclevel1", status: "In progress" }
+    { name: "SOC Level 1 Path", issuer: "TryHackMe", date: "2026", url: "https://tryhackme.com/path/outline/soclevel1", status: "In progress" },
+    { name: "IT Support Professional Certificate", issuer: "Google", date: "", url: "", status: "Earned" }
   ],
 
   tryhackme:  { url: "https://tryhackme.com/p/vijaydebarki", username: "vijaydebarki",
-                highlights: ["Top 5% globally · rank #134,521", "103 rooms completed", "19 badges · level 0x9 [MAGE]"] },
+                highlights: ["Top 5% globally · rank #134,521", "103 rooms · 19 badges · level 0x9 [MAGE]", "Jr Penetration Tester path in progress", "SOC Level 1 path in progress"] },
   hackthebox: { url: "https://profile.hackthebox.com/profile/019d6da5-1517-73c7-aa06-116ea1518bbd",
-                highlights: ["Hacker rank (Script Kiddie → Hacker)", "Season 8: Bronze → Silver → Ruby tier", "Holmes CTF 2025 participant", "6 Labs + 9 Academy achievements"] },
+                highlights: ["Hacker rank (Script Kiddie → Hacker)", "HTB Academy CPTS path in progress", "Season 8: Bronze → Silver → Ruby tier", "Holmes CTF 2025 · 6 Labs + 9 Academy achievements"] },
 
   links: {
     linkedin: "https://www.linkedin.com/in/vijay-debarki-131a8014a/",
@@ -230,6 +236,15 @@ section.s{padding:46px 0;border-top:1px solid var(--line)}
 .tlc ul{margin:0;padding-left:18px;color:#c6d0dd;font-size:15px}
 .tlc li{margin:3px 0}.tlc li::marker{color:var(--green)}
 .edu{font:13px var(--mono);color:var(--muted);margin:16px 0 0}
+.focus{padding:16px 18px;margin-bottom:12px}
+.focus .fh{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.focus .fh b{font:700 18px var(--disp)}
+.focus .fh span{font:11px var(--mono);color:var(--muted)}
+.fbar{display:flex;height:14px;border-radius:99px;overflow:hidden;border:1px solid var(--line);background:#060b13}
+.fbar i{display:block;height:100%;background:var(--c);box-shadow:0 0 14px var(--c)}
+.flegend{display:flex;justify-content:space-between;gap:10px;margin-top:8px;font:12px var(--mono)}
+.flegend span b{color:var(--c);font-size:15px;margin-right:6px}
+.term.xsh{display:block;min-width:min(520px,100%)}
 @keyframes spin{to{--a:360deg}}
 @keyframes flow{to{background-position:300% 0}}
 @keyframes blink{50%{opacity:0}}
@@ -247,7 +262,7 @@ section.s{padding:46px 0;border-top:1px solid var(--line)}
 <main class="wrap">
  <section class="hero">
   <div>
-   <div class="term" aria-hidden="true"><span class="p">visitor@<span id="host"></span></span>:<span class="h">~</span>$ <span id="typed"></span><span class="cursor"></span></div>
+   <div class="term" id="heroTerm"></div>
    <div class="hi">HELLO, I'M</div>
    <h1 class="name" id="pName"></h1>
    <p class="headline" id="pHead"></p>
@@ -258,7 +273,7 @@ section.s{padding:46px 0;border-top:1px solid var(--line)}
   <div class="avatarwrap"><div class="ring"><div class="face" id="face"></div><div class="status"><i></i>ON DUTY</div></div></div>
  </section>
 
- <section class="proof" id="proof"><div class="stats" id="pStats"></div><div class="asof" id="pAsof"></div></section>
+ <section class="proof" id="proof"><div class="focus card" id="pFocus"></div><div class="stats" id="pStats"></div><div class="asof" id="pAsof"></div></section>
 
  <section class="s" id="about"><div class="sh"><div><div class="ey">WHOAMI</div><h2>About me</h2></div></div>
   <div class="about"><div class="card txt" id="pAbout"></div><div class="card goal" id="pGoal"><span>STATUS</span><b></b></div></div>
@@ -284,6 +299,7 @@ section.s{padding:46px 0;border-top:1px solid var(--line)}
 </main>
 <footer class="foot">© <span id="yr"></span> <span class="siteName"></span> · Built with curiosity and too much coffee.</footer>
 
+<script src="assets/term.js"></script>
 <script>
 const P=PROFILE,$=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -296,15 +312,9 @@ const I={
 };
 document.querySelectorAll('.siteName').forEach(e=>e.textContent=P.siteName);document.title=P.siteName;
 $('yr').textContent=new Date().getFullYear();
-$('host').textContent=(P.siteName||'site').toLowerCase().replace(/[^a-z0-9]+/g,'-');
 $('pName').textContent=P.name;$('pHead').textContent=P.headline;
 $('pLoc').textContent=P.location?'📍 '+P.location:'';$('pLoc').hidden=!P.location;
 $('face').innerHTML=P.photo?'<img src="'+esc(P.photo)+'" alt="'+esc(P.name)+'" onerror="this.parentNode.innerHTML=\'<span class=glyph>&gt;_</span>\'">':'<span class="glyph">&gt;_</span>';
-
-// typing effect
-(function(){const w=P.typing&&P.typing.length?P.typing:['whoami'],el=$('typed');let i=0,j=0,del=false;
- if(matchMedia('(prefers-reduced-motion: reduce)').matches){el.textContent=w[0];return}
- (function tick(){const s=w[i%w.length];el.textContent=s.slice(0,j);if(!del&&j<s.length){j++;setTimeout(tick,90)}else if(!del){del=true;setTimeout(tick,1600)}else if(j>0){j--;setTimeout(tick,40)}else{del=false;i++;setTimeout(tick,300)}})()})();
 
 // CTAs
 const L=P.links||{};
@@ -315,6 +325,7 @@ $('ctas').innerHTML=(P.resume?'<a class="btn lime" href="'+esc(P.resume)+'" down
 $('pPitch').textContent=P.pitch||'';$('pPitch').hidden=!P.pitch;
 // proof stats
 const CM={red:'var(--red)',cyan:'var(--cyan)',green:'var(--green)',violet:'var(--violet)',mag:'var(--mag)',amber:'var(--amber)'};
+const FF=P.focus||[];$('pFocus').innerHTML=FF.length?'<div class="fh"><b>Focus split</b><span>where my time and skills go</span></div><div class="fbar">'+FF.map(f=>'<i style="--c:'+(CM[f.color]||'var(--green)')+';width:'+f.pct+'%"></i>').join('')+'</div><div class="flegend">'+FF.map(f=>'<span style="--c:'+(CM[f.color]||'var(--green)')+'"><b>'+f.pct+'%</b>'+esc(f.label)+'</span>').join('')+'</div>':'';$('pFocus').hidden=!FF.length;
 $('pStats').innerHTML=(P.stats||[]).map(s=>'<div class="card stat" style="--c:'+(CM[s.color]||'var(--green)')+'"><div class="v">'+esc(s.value)+'</div><div class="l">'+esc(s.label)+'</div><div class="u">'+esc(s.sub||'')+'</div></div>').join('');
 $('pAsof').textContent=P.statsAsOf?'stats as of '+P.statsAsOf:'';$('proof').hidden=!(P.stats||[]).length;
 // services
@@ -349,10 +360,10 @@ const hasCerts=C.length||CB.length||cp;$('certs').hidden=!hasCerts;$('navCerts')
 // platforms
 const T=P.tryhackme||{},H=P.hackthebox||{};const plats=[];
 if(T.url||T.username){const u=safe(T.url||('https://tryhackme.com/p/'+T.username));
- plats.push('<div class="card plat" style="--c:var(--red)"><h3>TryHackMe</h3><p>SOC Level 1 path, blue-team rooms and challenges.</p>'+((T.highlights||[]).length?'<ul class="hl">'+T.highlights.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':'')+
+ plats.push('<div class="card plat" style="--c:var(--red)"><h3>TryHackMe</h3><p>Offensive and defensive paths, rooms and challenges.</p>'+((T.highlights||[]).length?'<ul class="hl">'+T.highlights.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':'')+
  (T.username?'<img src="https://tryhackme-badges.s3.amazonaws.com/'+encodeURIComponent(T.username)+'.png" alt="TryHackMe badge for '+esc(T.username)+'" onerror="this.remove()">':'')+
  '<a class="btn" href="'+esc(u)+'" target="_blank" rel="noopener">'+I.ext+'View profile</a></div>')}
-if(H.url){plats.push('<div class="card plat" style="--c:var(--green)"><h3>HackTheBox</h3><p>Sherlocks, DFIR investigations, seasons and CTFs.</p>'+((H.highlights||[]).length?'<ul class="hl">'+H.highlights.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':'')+'<a class="btn" href="'+esc(safe(H.url))+'" target="_blank" rel="noopener">'+I.ext+'View profile</a></div>')}
+if(H.url){plats.push('<div class="card plat" style="--c:var(--green)"><h3>HackTheBox</h3><p>Machines, Academy modules, seasons and CTFs.</p>'+((H.highlights||[]).length?'<ul class="hl">'+H.highlights.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':'')+'<a class="btn" href="'+esc(safe(H.url))+'" target="_blank" rel="noopener">'+I.ext+'View profile</a></div>')}
 $('pPlats').innerHTML=plats.join('');$('platforms').hidden=!plats.length;
 
 // contacts
@@ -369,4 +380,26 @@ $('contact').hidden=!(L.linkedin||L.email||L.github);
   box.innerHTML=posts.length?posts.map(p=>'<a class="card post" style="--c:'+col(p.platform)+'" href="writeups/#/p/'+encodeURIComponent(p.slug)+'"><div class="meta"><span style="color:'+col(p.platform)+'">'+esc(p.platform||'Other')+'</span>'+(p.difficulty?'<span>· '+esc(p.difficulty)+'</span>':'')+'<span>· '+esc(p.date||'')+'</span></div><h3>'+esc(p.title||'Untitled')+'</h3>'+(p.summary?'<p>'+esc(p.summary)+'</p>':'')+'</a>').join('')
    :'<div class="empty">First write-ups coming soon.</div>';
  }catch(e){box.innerHTML='<div class="empty">First write-ups coming soon.</div>'}})();
+
+// interactive terminal
+(function(){const t2=a=>(a||[]).join('\n');
+ const files={
+  'about.txt':()=>esc(t2(P.about)),
+  'skills.txt':()=>Object.entries(P.skills||{}).map(([k,v])=>'<span class="cy">['+esc(k)+']</span> '+esc(v.join(', '))).join('\n'),
+  'certs.txt':()=>(P.certifications||[]).map(c=>'<span class="ok">▸</span> '+esc(c.name)+' <span class="dim">— '+esc(c.issuer)+(c.status?' · '+esc(c.status):'')+'</span>').join('\n'),
+  'experience.log':()=>(P.experience||[]).map(x=>'<span class="ok">['+esc(x.date)+']</span> '+esc(x.role)+' <span class="cy">@ '+esc(x.org)+'</span>').join('\n'),
+  'mission.txt':()=>esc(P.goal||''),
+  'contact.txt':()=>[L.linkedin&&'linkedin  '+esc(L.linkedin),L.github&&'github    '+esc(L.github),L.email&&'email     '+esc(L.email)].filter(Boolean).join('\n'),
+  'focus.txt':()=>(P.focus||[]).map(f=>esc(f.label)+'  '+'█'.repeat(Math.round(f.pct/5))+' '+f.pct+'%').join('\n')
+ };
+ const targets={cv:P.resume,linkedin:L.linkedin,github:L.github,thm:(P.tryhackme||{}).url,htb:(P.hackthebox||{}).url,credly:P.credlyProfile};
+ SiteShell.mount($('heroTerm'),{user:'visitor',host:(P.siteName||'offsec').toLowerCase().replace(/[^a-z0-9]+/g,'-'),files,suggest:P.suggest,openTargets:Object.keys(targets),
+  help:[['cat about.txt','who I am'],['cat skills.txt','skills & tools'],['cat certs.txt','certifications'],['cat experience.log','career log'],['open cv|linkedin|github|thm|htb|credly','open a link'],['cd centers','training command centers']],
+  cmds:{
+   whoami:()=>'<b class="cy">'+esc(P.name)+'</b> — '+esc(P.headline),
+   open:a=>{const k=(a[0]||'').toLowerCase();const u=targets[k];if(!u)return 'usage: open '+Object.keys(targets).filter(x=>targets[x]).join('|');SiteShell.openUrl(u);return '<span class="ok">[+]</span> opening '+esc(k)},
+   contact:()=>files['contact.txt'](),
+   hire:()=>'<span class="ok">[+]</span> '+esc(P.goal)+'\n'+files['contact.txt']()
+  }});
+})();
 </script></body></html>

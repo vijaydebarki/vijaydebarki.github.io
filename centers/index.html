@@ -66,22 +66,23 @@ a.center:hover{transform:translateY(-3px);border-color:var(--c);box-shadow:0 0 2
  <nav class="links"><a href="../">Home</a><a href="./" class="on">Centers</a><a href="../writeups/">Write-ups</a></nav>
 </div></header>
 <main class="wrap">
- <div class="term" aria-hidden="true"><span class="p">operator@offsec</span>:<span class="h">~/centers</span>$ ls --tracks<span class="cursor"></span></div>
+ <div class="term" id="siteTerm"></div>
  <div class="ey">TRAINING TRACKS</div>
  <h1>Command Centers</h1>
  <p class="lead">One command center per discipline — each with its own learning path, assessment gates, practice labs, case log, notes and GitHub vault. Invite-only sign-in.</p>
  <div class="grid" id="grid"></div>
  <p class="note">Progress bars show progress saved on this device. Open a center and sign in for your synced progress.</p>
 </main>
+<script src="../assets/term.js"></script>
 <script>
 /* ===== add a new center here ===== */
 const CENTERS=[
- {href:'../soc/',key:'SOC_L1_OFFLINE_V1',total:79,icon:'&gt;_',color:'var(--cyan)',title:'SOC Level 1',status:'LIVE',
-  desc:'Blue team: alert triage, SIEM, phishing, network and endpoint monitoring, with HTB Sherlocks as the practical layer.',
-  tags:['TryHackMe SOC L1','HTB Sherlocks','SOC cases']},
  {href:'../pentest/',key:'OFFSEC_PENTEST_V1',total:97,icon:'#!',color:'var(--red)',title:'Penetration Testing',status:'LIVE',
   desc:'Red team: recon, web and AD attacks, privilege escalation and reporting — Jr Penetration Tester path, then HTB Academy CPTS.',
   tags:['THM Jr Pentester','HTB CPTS','Engagements']},
+ {href:'../soc/',key:'SOC_L1_OFFLINE_V1',total:79,icon:'&gt;_',color:'var(--cyan)',title:'SOC Level 1',status:'LIVE',
+  desc:'Blue team: alert triage, SIEM, phishing, network and endpoint monitoring, with HTB Sherlocks as the practical layer.',
+  tags:['TryHackMe SOC L1','HTB Sherlocks','SOC cases']},
  {icon:'$_',color:'var(--amber)',title:'Bug Bounty',status:'PLANNED',desc:'Web application hunting: PortSwigger Academy topics, live programs and a findings log with CVSS severity.',tags:['PortSwigger','HackerOne','Findings']},
  {icon:'☁',color:'var(--violet)',title:'Cloud Security (Azure)',status:'PLANNED',desc:'Securing and attacking Azure: Entra ID, Defender, Sentinel, network controls and cloud misconfigurations.',tags:['Azure','Sentinel','Entra ID']}
 ];
@@ -93,5 +94,12 @@ document.getElementById('grid').innerHTML=CENTERS.map(c=>{
  const inner='<div class="top"><div class="ic">'+c.icon+'</div><span class="st" style="color:'+(live?'var(--green)':'var(--muted)')+'">'+esc(c.status)+'</span></div><h2>'+esc(c.title)+'</h2><p>'+esc(c.desc)+'</p><div class="tags">'+c.tags.map(t=>'<span class="tag">'+esc(t)+'</span>').join('')+'</div>'+
   (live?'<div class="prog"><div class="pl"><span>'+d+' / '+c.total+' rooms</span><b>'+p+'%</b></div><div class="bar2"><i style="width:'+p+'%"></i></div></div><span class="go">Enter center →</span>':'<div class="prog"><span class="pl">Coming soon</span></div>');
  return live?'<a class="center" style="--c:'+c.color+'" href="'+c.href+'">'+inner+'</a>':'<div class="center soon" style="--c:'+c.color+'">'+inner+'</div>'}).join('');
+SiteShell.mount(document.getElementById('siteTerm'),{user:'operator',host:'offsec',cwd:'~/centers',
+ suggest:['ls','cd pentest','cd soc','status','help'],
+ help:[['ls','list command centers'],['status','progress on this device'],['cd pentest | cd soc','enter a center']],
+ cmds:{
+  ls:()=>CENTERS.map(c=>(c.href?'<span class="ok">drwxr-xr-x</span>  <span class="cy">'+esc(c.href.replace(/^\.\.\//,''))+'</span>':'<span class="dim">d---------  (planned)</span>')+'  '+esc(c.title)).join('\n'),
+  status:()=>CENTERS.filter(c=>c.href).map(c=>{const d=localDone(c.key),p=Math.round(d/c.total*100);return esc(c.title.padEnd(22,' '))+'<span class="ok">'+'█'.repeat(Math.round(p/5))+'</span><span class="dim">'+'░'.repeat(20-Math.round(p/5))+'</span> '+p+'%'}).join('\n')
+ }});
 try{if(localStorage.getItem('SOC_L1_RGB')==='off')document.documentElement.dataset.rgb='off'}catch(e){}
 </script></body></html>

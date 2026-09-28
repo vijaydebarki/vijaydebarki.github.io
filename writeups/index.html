@@ -130,7 +130,7 @@ textarea.in{resize:vertical}
  <nav class="links"><a href="../">Home</a><a href="./" class="on">Write-ups</a><a href="../centers/">Centers</a></nav>
  <div id="adminBar" hidden><button class="btn sm lime" onclick="location.hash='#/new'">+ New</button></div>
 </div></header>
-<main class="wrap" id="app"></main>
+<main class="wrap"><div class="term" id="siteTerm"></div><div id="app"></div></main>
 <footer class="foot">© <span id="yr"></span> <span id="siteName2">OFFSEC By Vijay</span> · Write-ups cover retired / public content only · stored as Markdown on GitHub.<br><span id="adminFoot"><button onclick="adminLogin()">Admin</button></span></footer>
 <div id="toast" class="toast" role="status"></div>
 <div id="modal" class="modal" role="dialog" aria-modal="true"><div class="card box"><h3 id="mtitle"></h3><div id="mbody" class="muted"></div><div class="acts" id="mact"></div></div></div>
@@ -138,6 +138,7 @@ textarea.in{resize:vertical}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <script src="../assets/gh.js"></script>
+<script src="../assets/term.js"></script>
 <script>
 /* ===== SITE SETTINGS ===== */
 const SITE_NAME = "OFFSEC By Vijay";
@@ -182,7 +183,7 @@ function viewList(){
  const q=Q.toLowerCase(),A=allPosts();
  const list=A.filter(p=>(FILTER==='All'||p.platform===FILTER)&&((p.title||'')+' '+(p.summary||'')+' '+tagsOf(p.tags).join(' ')).toLowerCase().includes(q));
  const counts=n=>n==='All'?A.length:A.filter(p=>p.platform===n).length;
- $('app').innerHTML='<div class="term" aria-hidden="true"><span class="p">visitor@'+esc(SITE_NAME.toLowerCase().replace(/[^a-z0-9]+/g,'-'))+'</span>:<span class="h">~/writeups</span>$ ls -la<span class="cursor"></span></div>'+
+ $('app').innerHTML=
  '<div class="hero"><div><div class="ey">FIELD REPORTS</div><h1 class="big">Write-ups</h1><p>Investigations and walkthroughs from TryHackMe, HackTheBox and SOC labs — approach, evidence, detections and lessons learned.</p></div></div>'+
  '<div class="tools"><div class="search"><input id="q" placeholder="grep write-ups, tags…" aria-label="Search write-ups"></div><div class="chips">'+
  ['All','TryHackMe','HackTheBox','Other'].map(n=>'<button class="chip'+(FILTER===n?' on':'')+'" data-f="'+n+'">'+n+' · '+counts(n)+'</button>').join('')+'</div></div>'+
@@ -285,6 +286,19 @@ async function enterAdmin(){try{ADMIN=await GH.canWrite(SITE_REPO)}catch(e){ADMI
 async function adminLogin(){if(!GH.ready()||GH.siteRepo()!==SITE_REPO){const ok=await GH.openSettings({owner:OWNER,siteRepo:SITE_REPO,need:['siteRepo','vaultRepo'],intro:'Write-ups are published as Markdown files to your website repo; drafts go to your private vault repo.'});if(ok!==true)return}await enterAdmin();if(ADMIN)msg('Admin mode on')}
 async function adminSettings(){const r=await GH.openSettings({owner:OWNER,siteRepo:SITE_REPO,need:['siteRepo','vaultRepo']});if(r==='disconnected'){adminExit();return}if(r)await enterAdmin()}
 function adminExit(){ADMIN=false;DRAFTS=[];setAdminUI();load().then(route)}
+
+/* ---------- terminal ---------- */
+SiteShell.mount($('siteTerm'),{user:'visitor',host:SITE_NAME.toLowerCase().replace(/[^a-z0-9]+/g,'-'),cwd:'~/writeups',
+ suggest:['ls','grep phishing','cat <slug>','cd pentest','help'],
+ help:[['ls','list write-ups'],['cat SLUG','open a write-up'],['grep WORD','search write-ups'],['filter thm|htb|other|all','filter by platform'],['back','return to the list']],
+ cmds:{
+  ls:()=>{const A=allPosts();return A.length?A.map(p=>'<span class="dim">'+esc(p.date||'')+'</span>  <span class="cy">'+esc(p.slug)+'</span>'+(p.published?'':' <span class="am">[draft]</span>')+'  '+esc(p.title||'')).join('\n'):'(no write-ups yet)'},
+  cat:a=>{const s=(a[0]||'').replace(/\.md$/,'');if(!s)return 'usage: cat SLUG  (see <b>ls</b>)';const p=allPosts().find(x=>x.slug===s||x.slug.startsWith(s));if(!p)return 'cat: '+esc(s)+': No such write-up';location.hash='#/p/'+encodeURIComponent(p.slug)+(p.published?'':'?draft');return '<span class="ok">→</span> '+esc(p.title)},
+  grep:a=>{Q=a.join(' ');location.hash='#/';viewList();const n=allPosts().filter(p=>((p.title||'')+' '+(p.summary||'')+' '+tagsOf(p.tags).join(' ')).toLowerCase().includes(Q.toLowerCase())).length;return n+' match'+(n===1?'':'es')+' for "'+esc(Q)+'"'},
+  filter:a=>{const m={thm:'TryHackMe',htb:'HackTheBox',other:'Other',all:'All'}[(a[0]||'all').toLowerCase()];if(!m)return 'usage: filter thm|htb|other|all';FILTER=m;location.hash='#/';viewList();return 'filter: '+m},
+  back:()=>{location.hash='#/';return ''},
+  new:()=>{if(!ADMIN)return '<span class="er">permission denied</span> <span class="dim">(admin only)</span>';location.hash='#/new';return ''}
+ }});
 
 (async()=>{route();if(GH.ready()&&GH.siteRepo()===SITE_REPO){await enterAdmin()}else{await load();route()}})();
 </script></body></html>
