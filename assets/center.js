@@ -19,7 +19,7 @@ const HTB_DEFAULT=TRACK.practiceUrl;
 const SLUG=TRACK.slugs||{};
 const secPath=i=>(TRACK.curriculum[i]&&TRACK.curriculum[i].pathUrl)||THM_PATH;
 const secPlat=i=>(TRACK.curriculum[i]&&TRACK.curriculum[i].platform)||'thm';
-function roomUrl(k){if(S.links[k])return S.links[k];const [i,j]=k.split('-').map(Number),r=CURR[i][1][j];if(secPlat(i)==='thm'&&SLUG[r])return 'https://tryhackme.com/room/'+SLUG[r];if(secPlat(i)==='htb')return 'https://duckduckgo.com/?q='+encodeURIComponent('\\ site:academy.hackthebox.com module '+r);return 'https://duckduckgo.com/?q='+encodeURIComponent('\\ site:tryhackme.com/room '+(r==='Topic Rewind Recap'?CURR[i][0]+' topic rewind':r))}
+function roomUrl(k){if(S.links[k])return S.links[k];const [i,j]=k.split('-').map(Number),r=CURR[i][1][j];if(secPlat(i)==='task'||(secPlat(i)==='portswigger'&&!/^Lab: /.test(r)))return secPath(i);if(secPlat(i)==='portswigger')return 'https://duckduckgo.com/?q='+encodeURIComponent('\\ site:portswigger.net/web-security '+r.replace(/^Lab: /,'lab '));if(secPlat(i)==='thm'&&SLUG[r])return 'https://tryhackme.com/room/'+SLUG[r];if(secPlat(i)==='htb')return 'https://duckduckgo.com/?q='+encodeURIComponent('\\ site:academy.hackthebox.com module '+r);return 'https://duckduckgo.com/?q='+encodeURIComponent('\\ site:tryhackme.com/room '+(r==='Topic Rewind Recap'?CURR[i][0]+' topic rewind':r))}
 function htbUrl(i){return S.htb[i]||HTB_DEFAULT}
 function openUrl(u){const a=document.createElement('a');a.href=u;a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove()}
 function safeUrl(u){u=String(u||'').trim();if(!u)return '';if(!/^https?:\/\//i.test(u))u='https://'+u;try{return new URL(u).href}catch(e){return null}}
@@ -125,7 +125,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementB
 function thm(){openUrl(THM_PATH)}
 function start(){let c=cur();openUrl(roomUrl(c.key));if(st(c.key)==='Not Started'){setst(c.key,'In Progress');save()}msg('Opening: '+c.r)}
 function done(){let c=cur();setst(c.key,'Done');save();msg('Completed: '+c.r)}
-function renderDash(){const sc=document.getElementById('seccount');if(sc)sc.textContent=CURR.length+' sections';let a=all(),d=a.filter(x=>st(x.key)==='Done').length,c=cur();
+function renderDash(){try{renderEarn()}catch(e){}const sc=document.getElementById('seccount');if(sc)sc.textContent=CURR.length+' sections';let a=all(),d=a.filter(x=>st(x.key)==='Done').length,c=cur();
  pct.textContent=Math.round(d/a.length*100)+'%';rooms.textContent=d+' / '+a.length+' rooms';secno.textContent=(c.si+1);secname.textContent=c.s;
  unlocked.textContent=CURR.filter((_,i)=>passed(i)).length;casecount.textContent=S.cases.length;
  msec.textContent='SECTION '+(c.si+1)+' • '+c.s.toUpperCase();mroom.textContent=c.r;mstatus.textContent=st(c.key).toUpperCase();
@@ -149,7 +149,27 @@ function assess(i){ask('Section '+(i+1)+' assessment','Record your result for '+
 function renderHTB(){htblist.innerHTML=CURR.map((s,i)=>{let q=stats(i),p=passed(i);return '<tr><td><b>'+(i+1)+'. '+esc(s[0])+'</b></td><td>'+q.d+'/'+q.n+'</td><td><span class="tag '+(p?'done':'lock')+'">'+(p?'Passed':'Not Passed')+'</span></td><td><span class="tag '+(p?'ready':'lock')+'">'+(p?'Unlocked':'Locked')+'</span></td><td class="acts">'+(p?'<a class="btn sm lime" href="'+esc(htbUrl(i))+'" target="_blank" rel="noopener">'+TRACK.labels.practiceBtn+' ↗</a><button class="btn sm" onclick="newCase(\''+TRACK.labels.practiceShort+' / Section '+(i+1)+'\')">'+TRACK.labels.plan+'</button>':'<span class="muted" style="margin-right:6px">Pass assessment first</span>')+'<button class="btn sm" title="Edit HTB link" aria-label="Edit HTB link" onclick="editLink(\'htb\','+i+',\'Section '+(i+1)+' ('+TRACK.labels.practiceShort+')\')">✎</button></td></tr>'}).join('')}
 function launch(){let c=cur();if(passed(c.si)){go('htb');msg(TRACK.labels.practiceShort+' unlocked for current section')}else{go('assess');msg('Assessment required before '+TRACK.labels.practiceShort)}}
 function newCase(title){let n=S.cases.reduce((m,c)=>Math.max(m,parseInt(String(c.id).split('-')[1])||0),0)+1;let id=TRACK.caseId+'-'+String(n).padStart(3,'0');S.cases.push({id,title:title||TRACK.caseDefault,created:today(),notes:'',verdict:'Open'});save();go('cases');msg(id+' created')}
-function renderCases(){caselist.innerHTML=S.cases.length?S.cases.map((c,i)=>'<div class="card case"><h3>'+esc(c.id)+'</h3><input value="'+esc(c.title)+'" onchange="setTitle('+i+',this.value)" aria-label="Case title"><p class="muted" style="font-size:12px;margin:8px 0 0">Created '+esc(c.created)+' • <span class="tag '+(c.verdict==='Open'?'prog':'done')+'">'+esc(c.verdict)+'</span></p><textarea oninput="note('+i+',this.value)" placeholder="Evidence, timeline, IOC/TTP, MITRE, verdict, response…">'+esc(c.notes)+'</textarea><div class="row"><button class="btn sm" onclick="closeCase('+i+')">'+(c.verdict==='Open'?'Close case':'Reopen case')+'</button><button class="btn sm" onclick="delCase('+i+')">Delete</button></div></div>').join(''):'<div class="empty" style="grid-column:1/-1">No cases yet. Select “+ New Case” to log your first investigation.</div>'}
+function renderCases(){caselist.innerHTML=S.cases.length?S.cases.map((c,i)=>'<div class="card case"><h3>'+esc(c.id)+'</h3><input value="'+esc(c.title)+'" onchange="setTitle('+i+',this.value)" aria-label="Case title"><p class="muted" style="font-size:12px;margin:8px 0 0">Created '+esc(c.created)+' • <span class="tag '+(c.verdict==='Open'?'prog':'done')+'">'+esc(c.verdict)+'</span></p>'+caseFieldsHtml(c,i)+'<textarea oninput="note('+i+',this.value)" placeholder="'+esc(TRACK.casePlaceholder||'Evidence, timeline, IOC/TTP, MITRE, verdict, response…')+'">'+esc(c.notes)+'</textarea><div class="row"><button class="btn sm" onclick="closeCase('+i+')">'+(c.verdict==='Open'?'Close ':'Reopen ')+esc(TRACK.caseNoun||'case')+'</button><button class="btn sm" onclick="delCase('+i+')">Delete</button></div></div>').join(''):'<div class="empty" style="grid-column:1/-1">'+esc(TRACK.caseEmpty||'No cases yet. Select “+ New Case” to log your first investigation.')+'</div>'}
+function caseFieldsHtml(c,i){const F=TRACK.caseFields||[];if(!F.length)return '';
+ return '<div class="cfg">'+F.map(f=>{const v=c[f.k]??(f.type==='check'?false:'');const id='cf'+i+'_'+f.k;
+  if(f.type==='select')return '<label class="cf"><span>'+esc(f.label)+'</span><select class="linkin" onchange="setCF('+i+',\''+f.k+'\',this.value)">'+['',...f.options].map(o=>'<option'+(o===v?' selected':'')+' value="'+esc(o)+'">'+esc(o||'—')+'</option>').join('')+'</select></label>';
+  if(f.type==='check')return '<label class="cf cfc"><input type="checkbox"'+(v?' checked':'')+' onchange="setCF('+i+',\''+f.k+'\',this.checked)"><span>'+esc(f.label)+'</span></label>';
+  return '<label class="cf"><span>'+esc(f.label)+'</span><input class="linkin" '+(f.type==='number'?'type="number" min="0" step="1"':'')+' value="'+esc(v)+'" placeholder="'+esc(f.ph||'')+'" onchange="setCF('+i+',\''+f.k+'\','+(f.type==='number'?'Number(this.value)||0':'this.value')+')"></label>'}).join('')+'</div>'}
+function setCF(i,k,v){S.cases[i][k]=v;save()}
+function earnStats(){const C=S.cases,st=c=>(c.status||'').toLowerCase();
+ const subm=C.filter(c=>['submitted','triaged','resolved','duplicate','informative','n/a','not applicable'].includes(st(c)));
+ return {bounty:C.filter(c=>st(c)==='resolved').reduce((s,c)=>s+(Number(c.bounty)||0),0),programs:new Set(C.map(c=>(c.program||'').trim().toLowerCase()).filter(Boolean)).size,
+  submissions:subm.length,valid:C.filter(c=>['triaged','resolved'].includes(st(c))).length,dupes:C.filter(c=>st(c)==='duplicate').length,
+  reviews:S.notes.filter(n=>tagArr(n.tags).map(t=>t.toLowerCase()).includes('weekly-review')).length}}
+function renderEarn(){const el=document.getElementById('earnPanel');if(!el)return;const e=earnStats();
+ const set=(id,v)=>{const x=document.getElementById(id);if(x)x.textContent=v};
+ set('eBounty','$'+e.bounty.toLocaleString());set('ePrograms',e.programs);set('eSubs',e.submissions);set('eValid',e.valid);set('eDupes',e.dupes);set('eReviews',e.reviews);
+ const lab=all().filter(x=>/^Lab: /.test(x.r)),ld=lab.filter(x=>st(x.key)==='Done').length;set('eLabs',ld+' / '+lab.length);
+ const notes=S.notes.filter(n=>!tagArr(n.tags).map(t=>t.toLowerCase()).includes('weekly-review')).length;set('eNotes',notes)}
+function newReview(){const d=new Date(),wk=cur();
+ const n={id:nid(),title:'Weekly review — '+d.toLocaleDateString(undefined,{day:'2-digit',month:'short',year:'numeric'}),room:'',tags:'weekly-review',updated:Date.now(),
+  body:'## Focus this week\n'+wk.s+'\n\n## What I learned\n- \n\n## Labs completed\n- \n\n## Hunting (targets, results)\n- \n\n## Mistakes, false positives, gaps\n- \n\n## Next week priorities\n- \n'};
+ S.notes.unshift(n);CUR_NOTE=n.id;NOTE_PREVIEW=false;save();go('notes');msg('Weekly review created')}
 function setTitle(i,v){S.cases[i].title=v;persist()}
 function note(i,v){S.cases[i].notes=v;persist()}
 function closeCase(i){S.cases[i].verdict=S.cases[i].verdict==='Open'?'Closed':'Open';save()}
@@ -182,7 +202,7 @@ function hashStr(s){let h=0;for(let i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))
 const tagArr=t=>Array.isArray(t)?t:String(t||'').split(',').map(x=>x.trim()).filter(Boolean);
 function itemMd(kind,it){
  if(kind==='notes')return GH.fm.build({title:it.title||'Untitled note',room:it.room?roomName(it.room):undefined,roomKey:it.room||undefined,tags:tagArr(it.tags),updated:new Date(it.updated||Date.now()).toISOString(),id:it.id},it.body||'');
- return GH.fm.build({id:it.id,title:it.title||TRACK.caseDefault,created:it.created,verdict:it.verdict||'Open'},it.notes||'');
+ const ex={};(TRACK.caseFields||[]).forEach(f=>{if(it[f.k]!==undefined&&it[f.k]!=='')ex[f.k]=it[f.k]});return GH.fm.build({id:it.id,title:it.title||TRACK.caseDefault,created:it.created,verdict:it.verdict||'Open',...ex},it.notes||'');
 }
 function autoPath(kind,it){return kind==='notes'?TRACK.vault+'notes/'+GH.slug(it.title)+'-'+String(it.id).slice(-4)+'.md':TRACK.vault+'cases/'+it.id+'-'+GH.slug(it.title)+'.md'}
 function ownPattern(kind,it,p){return kind==='notes'?p.startsWith(TRACK.vault+'notes/')&&p.endsWith('-'+String(it.id).slice(-4)+'.md'):p.startsWith(TRACK.vault+'cases/'+it.id+'-')}
@@ -232,7 +252,7 @@ async function vaultPull(manual){
      Object.assign(it,{title:meta.title||f.name.replace(/\.md$/,''),room:meta.roomKey||it.room||'',tags:tagArr(meta.tags).join(', '),body,updated:Date.parse(meta.updated)||Date.now()});
     }else{
      if(!it){let id=meta.id&&!S.cases.some(x=>x.id===meta.id)?meta.id:TRACK.caseId+'-'+String(S.cases.reduce((m,c)=>Math.max(m,parseInt(String(c.id).split('-')[1])||0),0)+1).padStart(3,'0');it={id};S.cases.push(it)}
-     Object.assign(it,{title:meta.title||it.id,created:meta.created||today(),verdict:meta.verdict||'Open',notes:body});
+     Object.assign(it,{title:meta.title||it.id,created:meta.created||today(),verdict:meta.verdict||'Open',notes:body});(TRACK.caseFields||[]).forEach(f=>{if(meta[f.k]!==undefined)it[f.k]=f.type==='number'?Number(meta[f.k])||0:meta[f.k]});
     }
     it.ghPath=f.path;it.ghSha=f.sha;it.ghHash=hashStr(itemMd(kind,it));S.vaultFiles[f.path]=1;n++;
    }
@@ -378,6 +398,8 @@ function initDashShell(){
   grep:a=>{const q=a.join(' ').toLowerCase();if(!q)return 'usage: grep WORD';const r=all().filter(x=>(x.r+' '+x.s).toLowerCase().includes(q));return r.length?r.slice(0,12).map(x=>pad('S'+(x.si+1),4)+esc(x.r)+' <span class="dim">['+st(x.key)+']</span>').join('\n'):'(no match)'},
   case:(a)=>{if(a[0]==='new'){newCase(a.slice(1).join(' ')||undefined);return ''}if(a[0]==='ls'){return S.cases.length?S.cases.map(c=>esc(c.id)+'  '+esc(c.title)+' <span class="dim">['+esc(c.verdict)+']</span>').join('\n'):'(no cases)'}return 'usage: case new [title] | case ls'},
   note:(a)=>{if(!a.length){go('notes');return ''}const t=a.join(' ');const n={id:nid(),title:t.slice(0,60),room:'',tags:'quick',body:t,updated:Date.now()};S.notes.unshift(n);save();return '<span class="ok">[+]</span> note saved'},
+  earn:()=>{if(!document.getElementById('earnPanel'))return 'bash: earn: command not found';const e=earnStats();return '<span class="ok">$'+e.bounty.toLocaleString()+'</span> bounties (resolved)\nprograms: '+e.programs+' · submissions: '+e.submissions+' · valid: '+e.valid+' · duplicates: '+e.dupes},
+  review:()=>{newReview();return ''},
   logout:()=>{signOut();return ''},
   exit:()=>{signOut();return 'logout'}
  })});

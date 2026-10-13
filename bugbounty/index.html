@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en" data-rgb="on"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bug Bounty // Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/center.css"></head>
+<body><div class="app">
+<aside class="side">
+ <div class="brand"><div class="logo">&gt;_</div><div><b>BUG BOUNTY</b><small>LEARN &amp; EARN</small></div></div>
+ <div class="sitelinks"><a href="../">⌂ Home</a><a href="../centers/">◈ Centers</a><a href="../writeups/">▤ Posts</a></div>
+ <div class="navlbl">NAVIGATION</div>
+ <nav class="nav">
+  <button class="on" data-v="dash"><span class="ic">⌂</span>Command Center</button>
+  <button data-v="thm"><span class="ic">▣</span>8-Week Roadmap</button>
+  <button data-v="sections"><span class="ic">◫</span>Phase Progress</button>
+  <button data-v="assess"><span class="ic">✓</span>Readiness Gate</button>
+  <button data-v="htb"><span class="ic">⌘</span>Live Hunting</button>
+  <button data-v="cases"><span class="ic">$</span>Hunt Log</button>
+  <button data-v="notes"><span class="ic">✎</span>Topic Notes</button>
+  <button data-v="rev"><span class="ic">↻</span>Revision Center</button>
+  <button data-v="settings"><span class="ic">⚙</span>Settings</button>
+ </nav>
+ <div class="foot"><div id="whoami" class="who"></div><button class="btn sm" style="width:100%;margin:6px 0 10px" onclick="signOut()">⏻ Sign out</button><span class="dot"></span><span id="syncfoot">Saved in this browser</span><br>LEARN → LAB → HUNT → DOCUMENT → REVIEW</div>
+</aside>
+<main class="main">
+<div class="top"><div class="crumb" id="crumb">COMMAND CENTER / OVERVIEW</div><div class="actions" style="margin:0"><button class="btn" onclick="thm()">PortSwigger Academy ↗</button><button class="btn backupBtn" onclick="backup()">Backup</button></div></div>
+
+<section id="dash" class="view on">
+ <div class="term sh" id="dterm"><div><span class="p">hunter@bb-hunt</span>:<span class="h">~</span>$ mission --current <span class="o">→</span> <span id="termline"></span></div><div class="shout" id="dout"></div><label class="shline"><span class="shp"><span class="p">hunter@bb-hunt</span>:<span class="h">~</span>$</span><input id="dcmd" class="shin" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Terminal — type help" placeholder="type help"></label></div>
+ <div class="hero"><div><div class="ey">OPERATION: LEARN &amp; EARN</div><h1>Command Center</h1><p>Deep skill in one vulnerability class + authorized hunting on real programs, connected by one repeatable loop. Depth first, breadth later, income never promised.</p></div></div>
+ <div class="kpis">
+  <div class="card kpi"><label>Roadmap Completion</label><div class="num" id="pct">0%</div><div class="sub" id="rooms">0 / 0 rooms</div></div>
+  <div class="card kpi"><label>Current Phase</label><div class="num" id="secno">1</div><div class="sub" id="secname"></div></div>
+  <div class="card kpi"><label>Hunting Unlocked</label><div class="num" id="unlocked">0</div><div class="sub">readiness-passed phases</div></div>
+  <div class="card kpi"><label>Targets Logged</label><div class="num" id="casecount">0</div><div class="sub">in the hunt log</div></div>
+ </div>
+ <div class="rgb missionwrap"><div class="in">
+  <div class="mtop"><h3>⚡ Current mission</h3><span class="pill" id="mstatus">NOT STARTED</span></div>
+  <div class="mission"><div><div class="sec" id="msec"></div><h2 id="mroom"></h2><div class="muted">Learn → lab → hunt (in scope) → document → review.</div></div>
+  <div class="actions"><button class="btn lime" onclick="start()">▶ Start room</button><button class="btn" onclick="done()">Mark done</button></div></div>
+ </div></div>
+ <div class="twin" id="earnPanel">
+  <div class="card trk" style="--c:var(--cyan)"><div class="pt"><h3>// LEARNING TRACK</h3><span>depth over breadth</span></div>
+   <div class="tstats"><div class="tstat"><b id="eLabs">0 / 0</b><span>labs solved</span></div><div class="tstat"><b id="eNotes">0</b><span>topic notes</span></div><div class="tstat"><b id="eReviews">0</b><span>weekly reviews</span></div></div></div>
+  <div class="card trk" style="--c:var(--green)"><div class="pt"><h3>// EARNING TRACK</h3><span>authorized scope only</span></div>
+   <div class="tstats"><div class="tstat big"><b id="eBounty">$0</b><span>bounties on resolved findings</span></div><div class="tstat"><b id="ePrograms">0</b><span>programs</span></div><div class="tstat"><b id="eSubs">0</b><span>submissions</span></div><div class="tstat"><b id="eValid">0</b><span>valid · <em id="eDupes" style="font-style:normal">0</em> dupes</span></div></div></div>
+ </div>
+ <div class="card panel"><div class="pt"><h3>▸ THE LOOP — run this on every vuln class</h3><span>one class at a time</span></div>
+  <div class="loop">
+   <div class="step"><i>01</i><b>Learn</b><span>Understand the mechanism</span></div>
+   <div class="step"><i>02</i><b>Lab</b><span>Prove it in PortSwigger / HTB</span></div>
+   <div class="step"><i>03</i><b>Hunt</b><span>In-scope, authorized targets only</span></div>
+   <div class="step"><i>04</i><b>Document</b><span>Sanitized PoC, impact, fix</span></div>
+   <div class="step"><i>05</i><b>Review</b><span>Mistakes, false positives, report quality</span></div>
+   <div class="step"><i>06</i><b>Expand</b><span>Next class when ready, not by date</span></div>
+  </div>
+  <div class="rules"><span class="rule">In-scope assets only</span><span class="rule">Read scope, exclusions &amp; rate limits first</span><span class="rule">Your own test accounts &amp; data</span><span class="rule">No destructive actions</span><span class="rule">No real-user data in notes</span><span class="rule">Income never guaranteed</span></div>
+ </div>
+ <div class="grid">
+  <div class="card panel"><div class="pt"><h3>Section progress</h3><span id="seccount">14 sections</span></div><div id="sprogress"></div></div>
+  <div class="card panel"><div class="pt"><h3>Quick actions</h3><span>operator workflow</span></div>
+   <div class="quick">
+    <button onclick="go('assess')"><b>✓ Assessment</b><small>knowledge gate</small></button>
+    <button onclick="launch()"><b>⌘ Hunt</b><small>only after pass</small></button>
+    <button onclick="newCase()"><b>$ Log target</b><small>hunt log</small></button>
+    <button onclick="newReview()"><b>↻ Weekly review</b><small>end of week</small></button>
+   </div></div>
+ </div>
+</section>
+
+<section id="thm" class="view"><div class="hero"><div><div class="ey">MASTER PATH</div><h1>8-Week Roadmap</h1><p>A flexible milestone plan — extend any phase until the understanding is real. Tasks open the PortSwigger topic; labs open the exact lab. Use ✎ to fix or change any room link.</p></div></div>
+ <div class="search"><input id="search" placeholder="grep rooms or sections…" oninput="renderTHM()" aria-label="Search rooms"></div>
+ <div class="card panel" id="thmlist"></div></section>
+
+<section id="sections" class="view"><div class="hero"><div><div class="ey">MASTER CONTROL</div><h1>Section Progress</h1><p>Readiness is the gate for live hunting — labs before live, always.</p></div></div>
+ <div class="card panel tw"><table class="table"><thead><tr><th>Section</th><th>Rooms</th><th>Progress</th><th>Readiness</th><th>Hunting</th></tr></thead><tbody id="sectable"></tbody></table></div></section>
+
+<section id="assess" class="view"><div class="hero"><div><div class="ey">KNOWLEDGE GATE</div><h1>Assessment Gate</h1><p>Complete the section before recording pass/fail.</p></div></div><div id="asslist"></div></section>
+
+<section id="htb" class="view"><div class="hero"><div><div class="ey">PRACTICAL LAYER</div><h1>Live Hunting</h1><p>Hunting unlocks phase-by-phase after the readiness check. Use ✎ to pin a specific program for each phase. In-scope, authorized targets only.</p></div><div class="actions"><a class="btn" href="https://hackerone.com/opportunities/all" target="_blank" rel="noopener">HackerOne ↗</a><a class="btn" href="https://bugcrowd.com/engagements" target="_blank" rel="noopener">Bugcrowd ↗</a></div></div>
+ <div class="card panel tw"><table class="table"><thead><tr><th>Section</th><th>Rooms</th><th>Assessment</th><th>Gate</th><th>Action</th></tr></thead><tbody id="htblist"></tbody></table></div></section>
+
+<section id="cases" class="view"><div class="hero"><div><div class="ey">EARNING TRACK</div><h1>Hunt Log</h1><p>Authorized programs, what you tested and what came of it. Resolved findings with a bounty feed the earning total. Track the work, not a target number.</p></div><button class="btn lime" onclick="newCase()">+ Log target</button></div><div id="caselist" class="casegrid"></div></section>
+
+<section id="notes" class="view"><div class="hero"><div><div class="ey">RETAIN</div><h1>Topic Notes</h1><p><span class="vmini" id="vaultMini"></span> Private study notes. Markdown supported: <code>#</code> headings, <code>**bold**</code>, <code>`code`</code>, <code>```</code> code blocks, <code>- lists</code>.</p></div><button class="btn lime" onclick="newNote()">+ New note</button></div>
+ <div class="notesgrid">
+  <div class="card panel nlistp"><div class="search"><input id="nsearch" placeholder="grep notes…" oninput="renderNoteList()" aria-label="Search notes"></div><div id="nlist"></div></div>
+  <div class="card panel" id="neditor"></div>
+ </div>
+</section>
+
+<section id="rev" class="view"><div class="hero"><div><div class="ey">SPACED REPETITION</div><h1>Revision Center</h1><p>1-day / 3-day / 7-day recall. Due dates are highlighted.</p></div></div>
+ <div class="card panel tw"><table class="table"><thead><tr><th>Room</th><th>Section</th><th>Learned</th><th>1D</th><th>3D</th><th>7D</th></tr></thead><tbody id="revlist"></tbody></table></div></section>
+
+<section id="settings" class="view"><div class="hero"><div><div class="ey">SYSTEM</div><h1>Settings</h1><p id="syncline">Progress is saved in this browser.</p></div></div>
+ <div class="grid">
+  <div>
+   <div class="card panel"><div class="pt"><h3>Display</h3></div>
+    <div class="set"><div><b>RGB effects</b><div class="muted" style="font-size:12px">Animated neon borders, gradient headings and scanlines.</div></div><button class="switch" id="rgbSw" role="switch" aria-checked="true" aria-label="RGB effects" onclick="toggleRgb()"></button></div>
+   </div>
+   <div class="card panel"><div class="pt"><h3>GitHub vault</h3><span id="vaultBadge"></span></div>
+    <p class="muted" style="margin-top:0">Save your <b>Notes</b> and <b>hunt log</b> as Markdown files in a private GitHub repo (opens in Obsidian too).</p>
+    <div class="vstat" id="vaultStatus">Not connected</div>
+    <div class="actions" style="margin:10px 0 0"><button class="btn lime" id="vConnect" onclick="vaultConnect()">Connect GitHub</button><button class="btn" id="vPull" onclick="vaultPull(true)" hidden>↓ Pull from GitHub</button><button class="btn" id="vPush" onclick="vaultSync(true)" hidden>↑ Push now</button><button class="btn" id="vOff" onclick="vaultDisable()" hidden>Turn off</button></div>
+   </div>
+   <div class="card panel"><div class="pt"><h3>Backup / restore</h3></div>
+    <div class="actions" style="margin:0"><button class="btn backupBtn" onclick="backup()">Export JSON</button><label class="btn">Import JSON<input type="file" accept=".json,application/json" hidden onchange="restore(this)"></label></div>
+    <p class="muted">Import also accepts backups from the offline version of this app.</p></div>
+  </div>
+  <div class="card panel" id="accessPanel" hidden style="grid-column:1/-1"><div class="pt"><h3>Access control <span class="pill" id="acBadge" style="margin-left:6px"></span></h3><button class="btn sm" onclick="renderAccess()">↻ Refresh</button></div>
+   <div class="acgrid">
+    <div><div class="acsub">Pending requests</div><div id="acReq"></div></div>
+    <div><div class="acsub">Approved users</div><div class="acadd"><input id="acNew" class="linkin" type="email" placeholder="add email (e.g. student@gmail.com)" onkeydown="if(event.key==='Enter')addAllowed()"><button class="btn sm lime" onclick="addAllowed()">Add</button></div><div id="acAllow"></div></div>
+   </div>
+  </div>
+  <div class="card panel"><div class="pt"><h3>Reset</h3></div><button class="btn" onclick="resetAll()">Reset training data</button><p class="muted">This removes all rooms, assessments and cases.</p></div>
+ </div>
+</section>
+</main></div>
+
+<div id="gate" class="gate"><div class="gbox">
+ <div class="glogo"><div class="logo">&gt;_</div><div><b>BUG BOUNTY</b><small>LEARN &amp; EARN</small></div></div>
+ <div class="gterm sh" id="gterm"><div class="shout" id="gout"></div><label class="shline"><span class="shp"><span class="p">guest@bb-hunt</span>:<span class="h">~</span>$</span><input id="gcmd" class="shin" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Terminal — type help" placeholder="type help"></label></div>
+ <div id="gform">
+  <h2>Sign in to continue</h2>
+  <button class="btn gbtn" onclick="gGoogle()"><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>Continue with Google</button>
+  <p class="gnote">Access is invite-only. Sign in with your approved Google account.</p>
+  <div id="gerr" class="gmsg" role="alert"></div>
+ </div>
+ <div id="gpending" hidden>
+  <h2>Access pending</h2>
+  <p class="muted" style="margin:0 0 6px">Signed in as <b id="gpemail" style="color:var(--txt)"></b></p>
+  <p class="muted" style="margin:0 0 16px">Your request has been sent to the admin. You’ll get in as soon as it’s approved.</p>
+  <div class="grow"><button class="btn lime" onclick="recheckAccess()">Check again</button><button class="btn" onclick="AUTH&&AUTH.signOut()">Use another account</button></div>
+  <div id="gperr" class="gmsg" role="alert"></div>
+ </div>
+ <div id="gsetup" hidden><h2>Setup needed</h2><p class="muted">Paste your Firebase config into this file (search for <code>PASTE YOUR FIREBASE CONFIG</code>), then reload the page.</p></div>
+</div></div>
+<div id="toast" class="toast" role="status"></div>
+<div id="modal" class="modal" role="dialog" aria-modal="true"><div class="card box"><h3 id="mtitle"></h3><div id="mbody" class="muted"></div><div class="actions" id="mact"></div></div></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="../assets/gh.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+<script>
+/* ===== CENTER CONFIG — everything specific to this center lives here ===== */
+const TRACK={
+ "id": "BUGBOUNTY",
+ "key": "OFFSEC_BUGBOUNTY_V1",
+ "field": "state_bugbounty",
+ "vault": "bugbounty/",
+ "title": "Bug Bounty Command Center",
+ "short": "BUGBNTY",
+ "host": "bb-hunt",
+ "user": "hunter",
+ "group": "bughunter",
+ "os": "Kali GNU/Linux",
+ "pathUrl": "https://portswigger.net/web-security/all-topics",
+ "practiceUrl": "https://hackerone.com/opportunities/all",
+ "caseId": "HUNT",
+ "caseNoun": "target",
+ "caseDefault": "New target",
+ "caseEmpty": "No targets logged yet. Start when a class is lab-proven and you have read the program's scope.",
+ "casePlaceholder": "Hypothesis, endpoints tested, sanitized request/response evidence, impact, remediation… (no tokens, credentials or real user data)",
+ "caseFields": [
+  {
+   "k": "program",
+   "label": "Program",
+   "ph": "e.g. Acme VDP"
+  },
+  {
+   "k": "platform",
+   "label": "Platform",
+   "type": "select",
+   "options": [
+    "HackerOne",
+    "Bugcrowd",
+    "Intigriti",
+    "YesWeHack",
+    "Private / VDP"
+   ]
+  },
+  {
+   "k": "cls",
+   "label": "Vuln class",
+   "type": "select",
+   "options": [
+    "Broken Access Control",
+    "IDOR",
+    "API BOLA",
+    "XSS",
+    "Business Logic",
+    "Other"
+   ]
+  },
+  {
+   "k": "status",
+   "label": "Status",
+   "type": "select",
+   "options": [
+    "Recon",
+    "Testing",
+    "Submitted",
+    "Triaged",
+    "Resolved",
+    "Duplicate",
+    "Informative",
+    "N/A"
+   ]
+  },
+  {
+   "k": "severity",
+   "label": "Severity",
+   "type": "select",
+   "options": [
+    "Critical",
+    "High",
+    "Medium",
+    "Low",
+    "None"
+   ]
+  },
+  {
+   "k": "bounty",
+   "label": "Bounty (USD)",
+   "type": "number",
+   "ph": "0"
+  },
+  {
+   "k": "scope",
+   "label": "Scope & policy verified",
+   "type": "check"
+  }
+ ],
+ "labels": {
+  "case": "hunt target",
+  "cases": "hunt log",
+  "practice": "live hunting",
+  "practiceShort": "Hunting",
+  "practiceBtn": "Open programs",
+  "plan": "Log target"
+ },
+ "curriculum": [
+  {
+   "name": "Week 1 · HTTP & access-control basics",
+   "rooms": [
+    "Learn HTTP requests/responses, cookies, sessions, authN vs authZ",
+    "Understand horizontal vs vertical access control",
+    "Basic Burp Proxy & Repeater use",
+    "Read the PortSwigger access-control introduction",
+    "Start recording notes & questions"
+   ],
+   "platform": "task",
+   "pathUrl": "https://portswigger.net/web-security/access-control"
+  },
+  {
+   "name": "Weeks 2–3 · IDOR & broken access control",
+   "rooms": [
+    "Object identifiers, ownership checks, direct references",
+    "Missing authorization checks",
+    "Lab: Unprotected admin functionality",
+    "Lab: Unprotected admin functionality with unpredictable URL",
+    "Lab: User role controlled by request parameter",
+    "Lab: User role can be modified in user profile",
+    "Lab: User ID controlled by request parameter",
+    "Lab: User ID controlled by request parameter, with unpredictable user IDs",
+    "Lab: User ID controlled by request parameter with data leakage in redirect",
+    "Lab: User ID controlled by request parameter with password disclosure",
+    "Lab: Insecure direct object references",
+    "Lab: URL-based access control can be circumvented",
+    "Lab: Method-based access control can be circumvented",
+    "Lab: Multi-step process with no access control on one step",
+    "Lab: Referer-based access control",
+    "Document expected vs actual behaviour + root cause",
+    "Build a reusable access-control testing checklist"
+   ],
+   "platform": "portswigger",
+   "pathUrl": "https://portswigger.net/web-security/access-control"
+  },
+  {
+   "name": "Week 4 · API BOLA",
+   "rooms": [
+    "JSON APIs, object-level authorization, endpoints",
+    "Data minimization concepts",
+    "Lab: Exploiting an API endpoint using documentation",
+    "Lab: Finding and exploiting an unused API endpoint",
+    "Lab: Exploiting a mass assignment vulnerability",
+    "Lab: Exploiting server-side parameter pollution in a query string",
+    "Lab: Exploiting server-side parameter pollution in a REST URL",
+    "Review program scopes & policies before any live testing"
+   ],
+   "platform": "portswigger",
+   "pathUrl": "https://portswigger.net/web-security/api-testing"
+  },
+  {
+   "name": "Weeks 5–6 · Structured live hunting & reporting",
+   "rooms": [
+    "Select a few appropriate Bugcrowd / HackerOne programs",
+    "Read scope, exclusions, rate limits, disclosure rules",
+    "Map permitted features & workflows",
+    "Test only where authorized, with your own accounts and data",
+    "Record hypotheses, sanitized evidence, outcomes, duplicates",
+    "Submit only validated, in-scope findings with clear impact"
+   ],
+   "platform": "task",
+   "pathUrl": "https://hackerone.com/opportunities/all"
+  },
+  {
+   "name": "Weeks 7–8 · Maintain access control & introduce XSS",
+   "rooms": [
+    "Continue access-control practice & hunting",
+    "Lab: Reflected XSS into HTML context with nothing encoded",
+    "Lab: Stored XSS into HTML context with nothing encoded",
+    "Lab: DOM XSS in document.write sink using source location.search",
+    "Lab: DOM XSS in innerHTML sink using source location.search",
+    "Lab: DOM XSS in jQuery anchor href attribute sink using location.search source",
+    "Lab: DOM XSS in jQuery selector sink using a hashchange event",
+    "Lab: Reflected XSS into attribute with angle brackets HTML-encoded",
+    "Lab: Stored XSS into anchor href attribute with double quotes HTML-encoded",
+    "Lab: Reflected XSS into a JavaScript string with angle brackets HTML encoded",
+    "Review strengths, mistakes, false positives, report quality",
+    "Decide: deepen access control or make XSS the next focus"
+   ],
+   "platform": "portswigger",
+   "pathUrl": "https://portswigger.net/web-security/cross-site-scripting"
+  },
+  {
+   "name": "Backlog · Business logic vulnerabilities",
+   "rooms": [
+    "Lab: Excessive trust in client-side controls",
+    "Lab: High-level logic vulnerability",
+    "Lab: Inconsistent security controls",
+    "Lab: Flawed enforcement of business rules",
+    "Lab: Low-level logic flaw",
+    "Lab: Inconsistent handling of exceptional input",
+    "Lab: Weak isolation on dual-use endpoint",
+    "Lab: Insufficient workflow validation",
+    "Lab: Authentication bypass via flawed state machine",
+    "Lab: Infinite money logic flaw"
+   ],
+   "platform": "portswigger",
+   "pathUrl": "https://portswigger.net/web-security/logic-flaws"
+  }
+ ],
+ "slugs": {}
+};
+</script>
+<script src="../assets/center.js"></script></body></html>

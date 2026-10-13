@@ -4,7 +4,7 @@
    ==================================================================== */
 (function(){
 const ROOT=(function(){const s=document.currentScript&&document.currentScript.src;return s?s.replace(/assets\/term\.js.*$/,''):'/'})();
-const PAGES={home:'',centers:'centers/',soc:'soc/',pentest:'pentest/',writeups:'writeups/',posts:'writeups/'};
+const PAGES={home:'',centers:'centers/',soc:'soc/',pentest:'pentest/',bugbounty:'bugbounty/',bb:'bugbounty/',writeups:'writeups/',posts:'writeups/'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pad=(s,n)=>String(s).padEnd(n,' ');
 const css=`.xsh{cursor:text;white-space:normal!important}
@@ -31,10 +31,10 @@ function mount(el,o){
  const files=o.files||{};
  const base={
   help:()=>table((o.help||[]).concat([
-    ['ls','list files / pages'],['cat FILE','read a file'],['cd PAGE','go to home, centers, soc, pentest, writeups'],
+    ['ls','list files / pages'],['cat FILE','read a file'],['cd PAGE','home, centers, soc, pentest, bugbounty, writeups'],
     ['whoami / id / pwd','who and where'],['neofetch','system info'],['clear','clear screen (Ctrl+L)'],
     ['…','also: date echo uname history ping nmap sudo cowsay matrix exit']])),
-  ls:(a)=>{const f=Object.keys(files);const pages=['centers/','soc/','pentest/','writeups/'];
+  ls:(a)=>{const f=Object.keys(files);const pages=['centers/','soc/','pentest/','bugbounty/','writeups/'];
     if(a.some(x=>/^-.*a/.test(x)))return 'drwxr-xr-x  .\ndrwxr-xr-x  ..\n-rw-------  .secrets\n'+f.map(n=>'-rw-r--r--  '+esc(n)).join('\n')+'\n'+pages.map(p=>'drwxr-xr-x  <span class="cy">'+p+'</span>').join('\n');
     return f.map(n=>'<span class="c">'+esc(n)+'</span>').concat(pages.map(p=>'<span class="cy">'+p+'</span>')).join('  ')},
   cat:(a)=>{const n=(a[0]||'').replace(/^\.\//,'');if(!n)return 'usage: cat FILE  (try <b>ls</b>)';
